@@ -1,164 +1,181 @@
-# saas-starter
+# SaaS Starter Midtrans
 
 [![Next.js 15](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19-149eca?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178c6?logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20RLS-3ecf8e?logo=supabase)](https://supabase.com/)
-[![Midtrans](https://img.shields.io/badge/Midtrans-Snap%20API-002855)](https://midtrans.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20PostgreSQL-3ecf8e?logo=supabase)](https://supabase.com/)
+[![Midtrans](https://img.shields.io/badge/Midtrans-Snap-002855)](https://midtrans.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-**A clean, zero-bloat, production-grade SaaS boilerplate built with Next.js 15 (App Router), React 19, Strict TypeScript, Supabase SSR Auth, and Midtrans Snap Payments.**
+An open-source starting point for building subscription-based SaaS products with **Next.js 15, React 19, TypeScript, Supabase, PostgreSQL, and Midtrans Snap**.
 
-Stop wiring authentication callbacks, Row Level Security policies, and payment webhook signature checks from scratch. Clone `saas-starter` and ship your monetized SaaS product today.
+Includes an authentication flow, protected dashboard, plan data, payment creation, and a Midtrans notification endpoint. Use it as a foundation and adapt the product logic to your own application.
 
----
+> **Project status: Early development.** The payment integration is intended for Midtrans Sandbox testing. Review the security notes and complete the production-readiness checklist before accepting real payments. This repository is not a certified or production-ready billing platform.
 
-## Why `saas-starter`?
+## Features
 
-- **Zero Heavy Payment SDK Bloat:** Uses native `fetch` + Basic Auth + Node `crypto` for Midtrans Snap API and cryptographic SHA-512 webhook verification—no outdated or untyped third-party wrappers.
-- **Indonesian & Southeast Asian Payment Ready:** Out-of-the-box support for **QRIS**, **Virtual Accounts (BCA, BNI, BRI, Mandiri, Permata)**, **GoPay**, and **ShopeePay** via Midtrans Snap popup.
-- **Supabase SSR + Strict RLS:** Cookie-based session refreshing in `src/middleware.ts`, automatic profile creation via PostgreSQL triggers, and strict Row Level Security policies so users only ever access their own data.
-- **Idempotent Webhook Fulfillment:** Prevents duplicate plan upgrades if Midtrans retries webhook delivery.
-- **Runtime Type Safety with Zod:** Validates environment variables and incoming API/webhook payloads before touching your database.
+- Next.js App Router with React 19 and TypeScript.
+- Supabase Auth using `@supabase/ssr` and cookie-based sessions.
+- PostgreSQL schema for plans, user profiles, and transactions.
+- Row Level Security policies for user-scoped profile and transaction reads.
+- Midtrans Snap token creation from a server-side route.
+- SHA-512 signature verification for Midtrans payment notifications.
+- Zod validation for environment variables and request payloads.
+- Starter landing page, sign-in/sign-up screen, and protected dashboard.
 
----
+## Tech stack
 
-## Architecture & Payment Webhook Flow
+| Area | Technology |
+| --- | --- |
+| Framework | Next.js 15 App Router |
+| UI | React 19 |
+| Language | TypeScript |
+| Authentication & database | Supabase / PostgreSQL |
+| Payment gateway | Midtrans Snap |
+| Validation | Zod |
+| Styling | Tailwind CSS |
 
-```text
-+-------------------+        1. Clicks Upgrade         +---------------------------+
-|   Next.js Client  | -------------------------------> | POST /api/payment/create  |
-|  (Dashboard/Home) |                                  | (Zod + Auth Validation)   |
-+-------------------+                                  +---------------------------+
-         ^                                                           |
-         | 3. Opens Snap Popup                                       | 2. Insert 'pending' tx
-         |    (QRIS / VA / E-Wallet)                                 v
-+-------------------+                                  +---------------------------+
-|   Midtrans Snap   | <----- Requests Snap Token ----- |   Supabase PostgreSQL     |
-|  Payment Gateway  |                                  |  (profiles, transactions) |
-+-------------------+                                  +---------------------------+
-         |                                                           ^
-         | 4. Async Payment Notification (POST)                      |
-         v                                                           | 6. Upgrade plan_tier
-+---------------------------+                                        |    & mark tx 'paid'
-| POST /api/payment/webhook | -- 5. Verify SHA-512 Signature --------+
-+---------------------------+
-```
+## Getting started
 
----
+### Requirements
 
-## Project Structure
+- Node.js 20 or newer
+- npm
+- A Supabase project
+- A Midtrans account (Sandbox is sufficient for development)
 
-```text
-saas-starter/
-├── supabase/
-│   └── schema.sql                  # Tables, signup trigger, seed plans, and RLS policies
-├── src/
-│   ├── app/
-│   │   ├── api/payment/
-│   │   │   ├── create/route.ts     # Protected endpoint creating Midtrans Snap tokens
-│   │   │   └── webhook/route.ts    # Public SHA-512 verified Midtrans webhook handler
-│   │   ├── auth/callback/route.ts  # Supabase email/OAuth code exchange route
-│   │   ├── dashboard/page.tsx      # Protected user dashboard & billing history
-│   │   ├── login/page.tsx          # Unified Sign-In & Sign-Up screen
-│   │   ├── globals.css             # Tailwind base styles
-│   │   ├── layout.tsx              # Root layout + dynamic Snap.js script loader
-│   │   └── page.tsx                # Conversion-focused SaaS landing page
-│   ├── components/
-│   │   ├── CheckoutButton.tsx      # Client button triggering Midtrans Snap modal
-│   │   └── SignOutButton.tsx       # Clean Supabase session sign-out button
-│   ├── lib/
-│   │   ├── supabase/
-│   │   │   ├── admin.ts            # Service-role client for webhook fulfillment
-│   │   │   ├── client.ts           # Browser Supabase client
-│   │   │   └── server.ts           # Server Component / Route Handler client
-│   │   ├── env.ts                  # Zod environment variable validator
-│   │   └── midtrans.ts             # Snap REST client & SHA-512 signature verifier
-│   ├── types/
-│   │   └── database.ts             # Strict TypeScript interfaces for DB tables
-│   └── middleware.ts               # Auth session refresh & /dashboard route guard
-├── .env.example                    # Environment variables template
-├── next.config.ts
-├── package.json
-├── tailwind.config.ts
-└── tsconfig.json
-```
-
----
-
-## 5-Minute Quickstart Guide
-
-### 1. Clone & Install Dependencies
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/saas-starter.git
-cd saas-starter
+git clone https://github.com/Bagaas-ind/Saas-starter-midtrans.git
+cd Saas-starter-midtrans
 npm install
 ```
 
-### 2. Configure Environment Variables
+### 2. Configure environment variables
 
-Copy `.env.example` to `.env.local` and fill in your credentials from Supabase and the Midtrans Dashboard:
+Copy `.env.example` to `.env.local` and fill in the values from your Supabase and Midtrans dashboards.
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+macOS / Linux:
 
 ```bash
 cp .env.example .env.local
 ```
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase publishable/anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase service role key |
+| `MIDTRANS_SERVER_KEY` | Server-only Midtrans server key |
+| `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` | Midtrans client key used by Snap.js |
+| `MIDTRANS_IS_PRODUCTION` | `false` for Sandbox; `true` for production |
+| `NEXT_PUBLIC_APP_URL` | Public base URL of the application |
 
-MIDTRANS_SERVER_KEY=SB-Mid-server-your-server-key
-NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=SB-Mid-client-your-client-key
-MIDTRANS_IS_PRODUCTION=false
+Never commit `.env.local`, service-role keys, Midtrans server keys, or real credentials.
 
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+### 3. Set up Supabase
 
-### 3. Initialize Supabase Database
+1. Open your Supabase project.
+2. Go to **SQL Editor**.
+3. Run the contents of [`supabase/schema.sql`](./supabase/schema.sql).
+4. Review the RLS policies for your application's requirements before deploying.
 
-1. Open your **Supabase Project Dashboard** -> **SQL Editor**.
-2. Copy the entire contents of `supabase/schema.sql` and click **Run**.
-3. This automatically creates `plans`, `profiles`, `transactions`, the `on_auth_user_created` signup trigger, and all Row Level Security policies.
+The current schema creates three application tables: `plans`, `profiles`, and `transactions`. A signup trigger creates a profile for new users.
 
-### 4. Run the Development Server
+### 4. Run locally
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
----
+## Midtrans Sandbox setup
 
-## Testing Webhooks Locally (ngrok / cloudflared)
+1. Keep `MIDTRANS_IS_PRODUCTION=false`.
+2. Use Sandbox server and client keys in `.env.local`.
+3. Configure the Payment Notification URL in the Midtrans Sandbox dashboard to point to:
 
-Midtrans needs a public HTTPS URL to send payment status notifications to `/api/payment/webhook`:
+```text
+https://YOUR_PUBLIC_HOST/api/payment/webhook
+```
 
-1. Start a tunnel to port `3000`:
-   ```bash
-   # Using Cloudflare Tunnel (no account required)
-   npx cloudflared tunnel --url http://localhost:3000
+4. For local testing, expose port 3000 with a secure tunnel such as Cloudflare Tunnel or ngrok.
+5. Complete a test payment using the [Midtrans Sandbox Simulator](https://simulator.sandbox.midtrans.com/).
 
-   # Or using ngrok
-   ngrok http 3000
-   ```
-2. Copy the generated HTTPS URL (e.g., `https://random-subdomain.trycloudflare.com`).
-3. Open **Midtrans Dashboard (Sandbox)** -> **Settings** -> **Configuration**.
-4. Set **Payment Notification URL** to:
-   ```text
-   https://random-subdomain.trycloudflare.com/api/payment/webhook
-   ```
-5. Upgrade a plan in your app, complete the payment using the [Midtrans Sandbox Payment Simulator](https://simulator.sandbox.midtrans.com/), and refresh `/dashboard` to see your upgraded tier and `paid` status.
+Do not switch to production keys until the production-readiness checklist below has been completed and tested.
 
----
+## Available scripts
 
-## Contributing & Support
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run Next.js ESLint checks |
 
-Contributions, issues, and feature requests are welcome!
-If this starter kit saved you setup time, consider giving the repository a **Star** so more builders can discover it.
+## Project structure
+
+```text
+src/
+├── app/
+│   ├── api/payment/
+│   │   ├── create/route.ts
+│   │   └── webhook/route.ts
+│   ├── auth/callback/route.ts
+│   ├── dashboard/page.tsx
+│   ├── login/page.tsx
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+├── lib/
+│   ├── supabase/
+│   ├── env.ts
+│   └── midtrans.ts
+├── middleware.ts
+└── types/
+supabase/
+└── schema.sql
+```
+
+## Security and production-readiness
+
+Before production use, review and test at least the following:
+
+- Restrict profile updates so authenticated users cannot change privileged fields such as `plan_tier` directly.
+- Verify the webhook signature and reconcile `order_id`, transaction amount, currency, and expected payment status against the stored transaction.
+- Make payment fulfillment atomic and safe against concurrent or repeated notifications.
+- Add request size limits, rate limiting, robust error handling, and monitoring to public API routes.
+- Keep service-role and Midtrans server keys server-side only.
+- Test payment states including pending, settlement, capture, deny, cancel, and expire.
+- Configure HTTPS, trusted callback URLs, backups, and production secrets.
+- Review Supabase RLS policies and database privileges with a least-privilege approach.
+
+The current webhook includes signature verification and a basic already-paid check. That check alone should not be treated as a guarantee of atomic idempotency under concurrent webhook delivery.
+
+See [SECURITY.md](./SECURITY.md) for vulnerability reporting.
+
+## Roadmap
+
+- [ ] Harden profile RLS and privileged subscription updates.
+- [ ] Add a dedicated subscriptions model and payment event history.
+- [ ] Make webhook fulfillment atomic and fully idempotent.
+- [ ] Add automated unit and integration tests.
+- [ ] Add API rate limiting and request-size protections.
+- [ ] Expand setup, deployment, and troubleshooting documentation.
+
+## Contributing
+
+Contributions, bug reports, and feature requests are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a pull request.
 
 ## License
 
-Distributed under the [MIT License](./LICENSE).
+This project is licensed under the [MIT License](./LICENSE).
