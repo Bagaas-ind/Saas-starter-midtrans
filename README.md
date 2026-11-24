@@ -6,6 +6,10 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Auth%20%26%20PostgreSQL-3ecf8e?logo=supabase)](https://supabase.com/)
 [![Midtrans](https://img.shields.io/badge/Midtrans-Snap-002855)](https://midtrans.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?logo=vercel)](https://saas-starter-midtrans.vercel.app/)
+
+**Live Demo:** https://saas-starter-midtrans.vercel.app/  
+**Source Code:** https://github.com/Bagaas-ind/Saas-starter-midtrans
 
 **An open-source starter template for developers who want to build and customize a SaaS application with authentication, a user dashboard, subscription-plan examples, and Midtrans Snap payment integration.**
 
@@ -17,6 +21,7 @@ Built with Next.js 15, React 19, TypeScript, Supabase, PostgreSQL, and Midtrans.
 
 ## Table of contents
 
+- [Live demo](#live-demo)
 - [What is this project?](#what-is-this-project)
 - [What you get](#what-you-get)
 - [How the application works](#how-the-application-works)
@@ -38,6 +43,16 @@ Built with Next.js 15, React 19, TypeScript, Supabase, PostgreSQL, and Midtrans.
 - [Contributing](#contributing)
 - [License and open-source terms](#license-and-open-source-terms)
 - [Disclaimer](#disclaimer)
+
+## Live demo
+
+The application is deployed on Vercel and can be opened here:
+
+**https://saas-starter-midtrans.vercel.app/**
+
+The live deployment is intended for preview and evaluation. You can explore the public pages and try the authentication flow using your own test account. The deployment is connected to the project owner's Supabase environment, so do not enter sensitive personal information or use it as a production service.
+
+**Payment status:** Midtrans is not configured with real Sandbox or Production credentials in the current demo deployment. Placeholder values are used for configuration only, so checkout and payment processing are not available. Do not attempt real payments. To test payments locally, configure your own Midtrans Sandbox Server Key and Client Key as described in [Midtrans Sandbox setup](#midtrans-sandbox-setup).
 
 ## What is this project?
 
@@ -464,7 +479,17 @@ The project does not yet have dedicated `subscriptions` or `payment_events` tabl
 
 ## Deployment notes
 
-You can deploy the Next.js app to a Node.js-compatible hosting provider and use a hosted Supabase project. Before doing so:
+### Current hosted demo
+
+- **Platform:** Vercel
+- **Live URL:** https://saas-starter-midtrans.vercel.app/
+- **Source repository:** https://github.com/Bagaas-ind/Saas-starter-midtrans
+- **Deployment type:** Vercel Production deployment
+- **Payment integration:** Not active in the public demo; Midtrans credentials are placeholders.
+
+### Deploy your own instance
+
+You can deploy the Next.js app to Vercel or another Node.js-compatible hosting provider and use your own hosted Supabase project. Before doing so:
 
 1. Configure all environment variables in the hosting provider's secret/environment settings.
 2. Set `NEXT_PUBLIC_APP_URL` to the final HTTPS domain.
@@ -472,6 +497,8 @@ You can deploy the Next.js app to a Node.js-compatible hosting provider and use 
 4. Configure the Midtrans notification URL to the production `/api/payment/webhook` endpoint.
 5. Use the matching Midtrans production keys and set `MIDTRANS_IS_PRODUCTION=true` only after the security checklist is complete.
 6. Run a controlled end-to-end test and monitor server, database, and payment-provider logs.
+
+For Vercel, import this GitHub repository as a Next.js project, set the environment variables in **Project Settings → Environment Variables**, and deploy. Set `NEXT_PUBLIC_APP_URL` to the exact deployed domain, then add that domain and its `/auth/callback` URL to Supabase Authentication → URL Configuration. Redeploy after changing environment variables. Never copy the project owner's credentials; use your own Supabase and Midtrans accounts.
 
 Hosting, database, and payment-provider accounts may have their own pricing, usage limits, and terms. This repository does not include hosting or provider credits.
 
