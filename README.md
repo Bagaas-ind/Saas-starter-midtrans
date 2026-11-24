@@ -512,7 +512,7 @@ Hosting, database, and payment-provider accounts may have their own pricing, usa
 
 **Do not treat the current implementation as production-ready.** Before processing real payments or storing real customer data, address and independently test at least these items:
 
-- [ ] Restrict profile updates. The current RLS update policy allows a user to update their own profile row and does not explicitly prevent changing privileged fields such as `plan_tier`.
+- [x] Prevent authenticated users from changing their own `plan_tier`: the database schema and migration install a trigger that rejects client-role changes while allowing trusted `service_role` payment processing. Review any future profile columns for similar privilege boundaries.
 - [ ] Reconcile webhook `gross_amount`, `order_id`, currency, transaction status, and expected plan amount against the saved transaction before fulfillment.
 - [ ] Make webhook processing atomic and safe against simultaneous or repeated notifications (for example, a database transaction/RPC with appropriate constraints).
 - [ ] Review all payment status transitions and fraud-status handling against the current Midtrans documentation.
