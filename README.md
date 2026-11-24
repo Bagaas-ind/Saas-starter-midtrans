@@ -11,23 +11,11 @@
 **Live Demo:** https://saas-starter-midtrans.vercel.app/  
 **Source Code:** https://github.com/Bagaas-ind/Saas-starter-midtrans
 
-## Application screenshots
+## Project preview
 
-The following screenshots show the deployed application's landing page, architecture/features section, and pricing plans.
+Explore the deployed application: **[saas-starter-midtrans.vercel.app](https://saas-starter-midtrans.vercel.app/)**.
 
-### Landing page
-
-![SaaS Starter Midtrans landing page](./docs/screenshots/homepage.jpg)
-
-### Architecture and features
-
-![SaaS Starter Midtrans architecture and features](./docs/screenshots/architecture.jpg)
-
-### Pricing plans
-
-![SaaS Starter Midtrans pricing plans](./docs/screenshots/pricing.jpg)
-
-[Open the live demo](https://saas-starter-midtrans.vercel.app/)
+The demo is provided for interface preview and evaluation. Authentication uses the project owner's Supabase environment. Do not submit sensitive personal information. Midtrans checkout is not enabled in the public demo because real payment credentials are not configured.
 
 **An open-source starter template for developers who want to build and customize a SaaS application with authentication, a user dashboard, subscription-plan examples, and Midtrans Snap payment integration.**
 
@@ -40,7 +28,6 @@ Built with Next.js 15, React 19, TypeScript, Supabase, PostgreSQL, and Midtrans.
 ## Table of contents
 
 - [Live demo](#live-demo)
-- [Application screenshots](#application-screenshots)
 - [What is this project?](#what-is-this-project)
 - [What you get](#what-you-get)
 - [How the application works](#how-the-application-works)
