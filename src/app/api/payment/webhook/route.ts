@@ -9,7 +9,8 @@ const midtransWebhookSchema = z.object({
   order_id: z.string().min(1),
   status_code: z.string().min(1),
   gross_amount: z.string().regex(/^\d+(?:\.\d{1,2})?$/),
-  // Midtrans may omit currency for IDR notifications; IDR is the configured default.\n  currency: z.string().length(3).optional(),
+  // Midtrans may omit currency for IDR notifications; IDR is the configured default.
+  currency: z.string().length(3).optional(),
   signature_key: z.string().regex(/^[a-fA-F0-9]{128}$/),
   transaction_status: z.enum([
     "pending",
@@ -93,7 +94,14 @@ export async function POST(request: Request) {
       fraud_status,
     } = parsed.data;
 
-    console.info("[payment:webhook] Notification received", {\n      orderId: order_id,\n      transactionStatus: transaction_status,\n      paymentType: payment_type ?? null,\n      currency: currency ?? "IDR (default)",\n    });\n\n    // 1. Verify the SHA-512 signature before trusting any notification fields.
+    console.info("[payment:webhook] Notification received", {
+      orderId: order_id,
+      transactionStatus: transaction_status,
+      paymentType: payment_type ?? null,
+      currency: currency ?? "IDR (default)",
+    });
+
+    // 1. Verify the SHA-512 signature before trusting any notification fields.
     if (
       !isValidMidtransSignature({
         orderId: order_id,
