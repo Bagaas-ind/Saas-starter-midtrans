@@ -41,8 +41,9 @@
 
 Gunakan proyek ini sebagai fondasi awal, lalu sesuaikan fitur dan tampilannya dengan kebutuhan produk SaaS yang ingin kamu bangun.
 
-> [!WARNING]
-> **Masih dalam tahap pengembangan dan belum siap untuk produksi.** Integrasi pembayaran ditujukan untuk Midtrans Sandbox. Demo publik hanya untuk melihat antarmuka; fitur checkout dapat dinonaktifkan. Jangan masukkan data pribadi atau pembayaran yang sensitif.
+## 📍 Status Proyek
+
+Proyek ini dikembangkan sebagai starter kit open-source dan masih terus disempurnakan. Fitur pembayaran saat ini menggunakan lingkungan **Midtrans Sandbox** untuk kebutuhan pengembangan dan pengujian. Demo publik disediakan untuk melihat tampilan serta alur antarmuka aplikasi.
 
 ## 🧰 Teknologi yang Digunakan
 
