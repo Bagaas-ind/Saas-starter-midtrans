@@ -9,7 +9,7 @@ const midtransWebhookSchema = z.object({
   order_id: z.string().min(1),
   status_code: z.string().min(1),
   gross_amount: z.string().regex(/^\d+(?:\.\d{1,2})?$/),
-  currency: z.string().length(3),
+  // Midtrans may omit currency for IDR notifications; IDR is the configured default.\n  currency: z.string().length(3).optional(),
   signature_key: z.string().regex(/^[a-fA-F0-9]{128}$/),
   transaction_status: z.enum([
     "pending",
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       fraud_status,
     } = parsed.data;
 
-    // 1. Verify the SHA-512 signature before trusting any notification fields.
+    console.info("[payment:webhook] Notification received", {\n      orderId: order_id,\n      transactionStatus: transaction_status,\n      paymentType: payment_type ?? null,\n      currency: currency ?? "IDR (default)",\n    });\n\n    // 1. Verify the SHA-512 signature before trusting any notification fields.
     if (
       !isValidMidtransSignature({
         orderId: order_id,
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
     }
 
     // This starter currently prices all plans in Indonesian Rupiah.
-    if (currency !== "IDR") {
+    if (currency && currency !== "IDR") {
       return NextResponse.json(
         { error: "Unsupported payment currency" },
         { status: 422 }
