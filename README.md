@@ -79,6 +79,12 @@ Proyek ini dikembangkan sebagai starter kit open-source dan masih terus disempur
 
 Proyek ini belum menjadi platform langganan lengkap. Penagihan otomatis berulang, invoice, manajemen tim, pencatatan penggunaan, dan siklus langganan secara menyeluruh masih perlu dikembangkan.
 
+Penguatan keamanan pembayaran berikut juga masih dalam tahap implementasi dan verifikasi:
+
+- **Atomic fulfillment** melalui PostgreSQL RPC sudah disiapkan, tetapi perlu diterapkan pada database dan diuji pada lingkungan Supabase proyek.
+- **Perlindungan notifikasi bersamaan** menggunakan conditional update dan row-level locking di database masih perlu diverifikasi melalui pengujian konkurensi.
+- **Validasi currency** pada webhook sudah ditambahkan untuk mata uang IDR, tetapi tetap perlu diuji dengan payload notifikasi Sandbox yang valid dan tidak valid.
+
 ---
 
 ## 🚀 Cara Menjalankan Proyek
