@@ -8,7 +8,7 @@ import type { TransactionStatus } from "@/types/database";
 const midtransWebhookSchema = z.object({
   order_id: z.string().min(1),
   status_code: z.string().min(1),
-  gross_amount: z.string().regex(/^\\d+(?:\\.\\d{1,2})?$/),
+  gross_amount: z.string().regex(/^\d+(?:\.\d{1,2})?$/),
   currency: z.string().length(3),
   signature_key: z.string().regex(/^[a-fA-F0-9]{128}$/),
   transaction_status: z.enum([
