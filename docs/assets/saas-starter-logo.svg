@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260" role="img" aria-labelledby="title desc">
+  <title id="title">SaaS Starter Midtrans</title>
+  <desc id="desc">Logo SaaS Starter Midtrans dengan simbol lapisan aplikasi dan kilat.</desc>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172554"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="228" height="228" rx="54" fill="url(#tile)" stroke="#334155" stroke-width="3"/>
+  <path d="M130 48 194 84 130 120 66 84Z" fill="url(#g)"/>
+  <path d="m66 105 64 36 64-36v34l-64 37-64-37Z" fill="#60a5fa" opacity=".9"/>
+  <path d="m66 155 64 36 64-36v24l-64 37-64-37Z" fill="#818cf8" opacity=".9"/>
+  <path d="m139 70-28 48h22l-9 34 39-54h-24l12-28Z" fill="#fff"/>
+  <text x="286" y="122" fill="#0f172a" font-family="Inter,Arial,sans-serif" font-size="58" font-weight="800" letter-spacing="-2">SAAS STARTER</text>
+  <text x="290" y="174" fill="#64748b" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="700" letter-spacing="8">MIDTRANS</text>
+  <path d="M290 198h330" stroke="url(#g)" stroke-width="7" stroke-linecap="round"/>
+</svg>
