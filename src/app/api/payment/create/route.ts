@@ -47,6 +47,17 @@ export async function POST(request: Request) {
       ]);
 
     if (planError || !plan || plan.price_idr <= 0) {
+      // Keep database details in server logs only; never expose them to the client.
+      console.error("[payment:create] Plan lookup failed", {
+        planId,
+        code: planError?.code,
+        message: planError?.message,
+        details: planError?.details,
+        hint: planError?.hint,
+        planFound: Boolean(plan),
+        priceIdr: plan?.price_idr ?? null,
+      });
+
       return NextResponse.json(
         { error: "Selected plan is unavailable for checkout." },
         { status: 404 }
@@ -103,6 +114,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
+    console.error("[payment:create] Unexpected checkout error", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
