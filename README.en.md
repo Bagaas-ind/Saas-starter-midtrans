@@ -43,8 +43,9 @@
 
 Instead of starting from an empty folder, use this as a foundation and customize it for your own SaaS idea.
 
-> [!WARNING]
-> **Early development — not production-ready.** Payment integration is intended for the Midtrans Sandbox only. The live demo is for interface preview; checkout may be disabled. Do not enter sensitive or real payment information.
+## 📍 Project Status
+
+This open-source starter kit is actively being developed and refined. The payment integration currently uses the **Midtrans Sandbox** environment for development and testing. The public demo is available to explore the application's interface and user flow.
 
 ## 🧰 Built with
 
