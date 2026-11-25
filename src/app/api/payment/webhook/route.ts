@@ -169,6 +169,18 @@ export async function POST(request: Request) {
     // 3. Map only the supported Midtrans transitions to internal DB statuses.
     const nextStatus = mapMidtransStatus(transaction_status, fraud_status);
 
+    // A pending notification does not change the entitlement or transaction
+    // state, so acknowledge it without invoking the fulfillment RPC.
+    if (nextStatus === "pending") {
+      return NextResponse.json({
+        received: true,
+        already_processed: false,
+        order_id,
+        status: "pending",
+        payment_type: payment_type ?? null,
+      });
+    }
+
     // 4. A single PostgreSQL function updates the transaction and entitlement
     //    in one DB transaction. Its conditional UPDATE serializes duplicates.
     const { data: fulfillment, error: fulfillmentError } =
