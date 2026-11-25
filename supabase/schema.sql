@@ -218,7 +218,7 @@ AS $$
 DECLARE
     v_transaction public.transactions%ROWTYPE;
 BEGIN
-    IF p_new_status NOT IN ('pending', 'paid', 'failed', 'expired') THEN
+    IF p_new_status IS NULL OR p_new_status NOT IN ('pending', 'paid', 'failed', 'expired') THEN
         RAISE EXCEPTION 'Unsupported transaction status: %', p_new_status
             USING ERRCODE = '22023';
     END IF;
