@@ -283,7 +283,7 @@ export default async function LandingPage() {
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   Accept QRIS, BCA/BNI/BRI/Mandiri Virtual Accounts, GoPay, and
-                  ShopeePay with webhook idempotency (partial — concurrent protection in progress).
+                  Webhook Idempotency (partial — concurrent protection in progress).
                 </p>
               </div>
 
