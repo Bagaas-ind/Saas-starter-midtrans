@@ -1,22 +1,78 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { verifyMidtransSignature } from "@/lib/midtrans";
+import { getServerEnv } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { TransactionStatus } from "@/types/database";
 
 const midtransWebhookSchema = z.object({
   order_id: z.string().min(1),
   status_code: z.string().min(1),
-  gross_amount: z.string().min(1),
-  signature_key: z.string().min(1),
-  transaction_status: z.string().min(1),
+  gross_amount: z.string().regex(/^\\d+(?:\\.\\d{1,2})?$/),
+  currency: z.string().length(3),
+  signature_key: z.string().regex(/^[a-fA-F0-9]{128}$/),
+  transaction_status: z.enum([
+    "pending",
+    "capture",
+    "settlement",
+    "deny",
+    "cancel",
+    "expire",
+  ]),
   payment_type: z.string().optional(),
   fraud_status: z.string().optional(),
 });
 
+function isValidMidtransSignature(params: {
+  orderId: string;
+  statusCode: string;
+  grossAmount: string;
+  signatureKey: string;
+}): boolean {
+  const { MIDTRANS_SERVER_KEY } = getServerEnv();
+  const signaturePayload =
+    params.orderId +
+    params.statusCode +
+    params.grossAmount +
+    MIDTRANS_SERVER_KEY;
+
+  const expected = createHash("sha512")
+    .update(signaturePayload, "utf8")
+    .digest();
+  const received = Buffer.from(params.signatureKey, "hex");
+
+  // timingSafeEqual throws when buffer lengths differ; validate first.
+  if (expected.length !== received.length) {
+    return false;
+  }
+
+  return timingSafeEqual(expected, received);
+}
+
+function mapMidtransStatus(
+  status: z.infer<typeof midtransWebhookSchema>["transaction_status"],
+  fraudStatus?: string
+): TransactionStatus {
+  switch (status) {
+    case "settlement":
+      return "paid";
+    case "capture":
+      // A card capture is only fulfilled when Midtrans marks the fraud check
+      // as accepted. "challenge" remains pending for manual review.
+      return fraudStatus === "accept" ? "paid" : "pending";
+    case "deny":
+    case "cancel":
+      return "failed";
+    case "expire":
+      return "expired";
+    case "pending":
+      return "pending";
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    const rawBody = await request.json();
+    const rawBody: unknown = await request.json();
     const parsed = midtransWebhookSchema.safeParse(rawBody);
 
     if (!parsed.success) {
@@ -30,125 +86,138 @@ export async function POST(request: Request) {
       order_id,
       status_code,
       gross_amount,
+      currency,
       signature_key,
       transaction_status,
       payment_type,
       fraud_status,
     } = parsed.data;
 
-    // 1. Cryptographic SHA-512 signature check
-    const isValidSignature = verifyMidtransSignature({
-      orderId: order_id,
-      statusCode: status_code,
-      grossAmount: gross_amount,
-      signatureKey: signature_key,
-    });
-
-    if (!isValidSignature) {
+    // 1. Verify the SHA-512 signature before trusting any notification fields.
+    if (
+      !isValidMidtransSignature({
+        orderId: order_id,
+        statusCode: status_code,
+        grossAmount: gross_amount,
+        signatureKey: signature_key,
+      })
+    ) {
       return NextResponse.json(
         { error: "Invalid webhook signature" },
         { status: 401 }
       );
     }
 
+    // This starter currently prices all plans in Indonesian Rupiah.
+    if (currency !== "IDR") {
+      return NextResponse.json(
+        { error: "Unsupported payment currency" },
+        { status: 422 }
+      );
+    }
+
     const adminSupabase = createAdminClient();
 
-    // 2. Fetch existing transaction record
-    const { data: transaction, error: txError } = await adminSupabase
-      .from("transactions")
-      .select("*")
-      .eq("order_id", order_id)
-      .single();
+    // 2. Load the server-side order and validate its expected amount.
+    const { data: transaction, error: transactionError } =
+      await adminSupabase
+        .from("transactions")
+        .select("order_id, user_id, plan_id, amount, status")
+        .eq("order_id", order_id)
+        .maybeSingle();
 
-    if (txError || !transaction) {
+    if (transactionError) {
+      console.error("Failed to load webhook transaction", transactionError);
+      return NextResponse.json(
+        { error: "Unable to load transaction" },
+        { status: 500 }
+      );
+    }
+
+    if (!transaction) {
       return NextResponse.json(
         { error: "Transaction order not found" },
         { status: 404 }
       );
     }
 
-    // The signed amount must also match the amount recorded when checkout was created.
-    // A valid signature alone does not prove this order was created for this amount.
     const notifiedAmount = Number(gross_amount);
     const recordedAmount = Number(transaction.amount);
 
     if (
-      !Number.isFinite(notifiedAmount) ||
-      !Number.isFinite(recordedAmount) ||
+      !Number.isSafeInteger(notifiedAmount) ||
+      !Number.isSafeInteger(recordedAmount) ||
       notifiedAmount !== recordedAmount
     ) {
       return NextResponse.json(
         { error: "Webhook amount does not match the recorded transaction" },
-        { status: 400 }
+        { status: 422 }
       );
     }
 
-    // 3. Idempotency guard: if already paid, do not re-process
-    if (transaction.status === "paid") {
+    // Only a pending order may transition. The database RPC repeats this
+    // condition atomically to protect against two requests arriving together.
+    if (transaction.status !== "pending") {
       return NextResponse.json({
         received: true,
-        message: "Transaction already settled",
+        already_processed: true,
+        order_id,
+        status: transaction.status,
       });
     }
 
-    // 4. Map Midtrans transaction_status to internal status
-    let nextStatus: TransactionStatus = "pending";
+    // 3. Map only the supported Midtrans transitions to internal DB statuses.
+    const nextStatus = mapMidtransStatus(transaction_status, fraud_status);
 
-    if (transaction_status === "capture") {
-      nextStatus = fraud_status === "accept" ? "paid" : "pending";
-    } else if (transaction_status === "settlement") {
-      nextStatus = "paid";
-    } else if (transaction_status === "expire") {
-      nextStatus = "expired";
-    } else if (
-      transaction_status === "cancel" ||
-      transaction_status === "deny" ||
-      transaction_status === "failure"
-    ) {
-      nextStatus = "failed";
-    } else if (transaction_status === "pending") {
-      nextStatus = "pending";
-    }
+    // 4. A single PostgreSQL function updates the transaction and entitlement
+    //    in one DB transaction. Its conditional UPDATE serializes duplicates.
+    const { data: fulfillment, error: fulfillmentError } =
+      await adminSupabase.rpc("fulfill_transaction", {
+        p_order_id: order_id,
+        p_new_status: nextStatus,
+      });
 
-    // 5. Update transaction record
-    const { error: updateTxError } = await adminSupabase
-      .from("transactions")
-      .update({
-        status: nextStatus,
-        payment_type: payment_type ?? transaction.payment_type,
-      })
-      .eq("id", transaction.id);
-
-    if (updateTxError) {
+    if (fulfillmentError) {
+      console.error("Atomic transaction fulfillment failed", fulfillmentError);
       return NextResponse.json(
-        { error: "Failed to update transaction status" },
+        { error: "Failed to process payment notification" },
         { status: 500 }
       );
     }
 
-    // 6. Upgrade user plan_tier when payment is settled
-    if (nextStatus === "paid") {
-      const { error: upgradeError } = await adminSupabase
-        .from("profiles")
-        .update({ plan_tier: transaction.plan_id })
-        .eq("id", transaction.user_id);
+    const result = fulfillment as {
+      already_processed?: boolean;
+      order_id?: string;
+      status?: TransactionStatus;
+    } | null;
 
-      if (upgradeError) {
-        return NextResponse.json(
-          { error: "Payment recorded, but failed to upgrade user profile" },
-          { status: 500 }
-        );
-      }
+    if (result?.already_processed) {
+      return NextResponse.json({
+        received: true,
+        already_processed: true,
+        order_id,
+      });
     }
 
     return NextResponse.json({
       received: true,
+      already_processed: false,
       order_id,
-      status: nextStatus,
+      status: result?.status ?? nextStatus,
+      payment_type: payment_type ?? null,
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Webhook processing error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: "Invalid JSON webhook payload" },
+        { status: 400 }
+      );
+    }
+
+    console.error("Midtrans webhook processing error", error);
+    return NextResponse.json(
+      { error: "Internal webhook processing error" },
+      { status: 500 }
+    );
   }
 }
