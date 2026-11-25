@@ -1,54 +1,99 @@
-# SaaS Starter — Midtrans
+<!--
+  SaaS Starter — Midtrans
+  A clean, visual README for the project.
+-->
 
-A practical starting point for building a SaaS application with **Next.js, Supabase, PostgreSQL, and Midtrans Snap**.
+<div align="center">
 
-Use this project to explore authentication, a protected dashboard, sample subscription plans, and a payment checkout flow — then adapt the code to your own product.
+# ⚡ SaaS Starter — Midtrans
 
-<p align="center">
-  <a href="https://saas-starter-midtrans.vercel.app/"><strong>▶ Open Live Demo</strong></a>
+### A modern SaaS starter built with Next.js, Supabase, PostgreSQL, and Midtrans.
+
+<p>
+  <a href="https://saas-starter-midtrans.vercel.app/"><strong>🌐 Live Demo</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/Bagaas-ind/Saas-starter-midtrans/issues">🐛 Report a Bug</a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/Bagaas-ind/Saas-starter-midtrans/pulls">🤝 Contribute</a>
 </p>
 
-> **Project status: Early development · Sandbox only**
->
-> This is a learning and development starter, not a production-ready billing platform. The public demo is for interface preview; payment checkout is disabled and you should not enter sensitive personal information.
+<p>
+  <img src="https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs" alt="Next.js 15">
+  <img src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white" alt="React 19">
+  <img src="https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-UI-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS">
+  <img src="https://img.shields.io/badge/Supabase-Backend-3FCF8E?logo=supabase&logoColor=white" alt="Supabase">
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Midtrans-Snap-00A5E5" alt="Midtrans Snap">
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Status-Early_Development-orange" alt="Early development">
+  <img src="https://img.shields.io/badge/Payments-Sandbox_Only-yellow" alt="Sandbox only">
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
+</p>
+
+</div>
 
 ---
 
-## What you get
+## ✨ Overview
 
-- **Authentication** — sign up and sign in with Supabase Auth.
-- **Protected dashboard** — authenticated users can access their dashboard.
-- **Plan examples** — Free, Pro, and Enterprise records stored in PostgreSQL.
-- **Midtrans Snap** — server-side transaction creation and notification signature verification.
-- **Transaction history** — a basic payment history in the dashboard.
-- **Database security foundation** — PostgreSQL Row Level Security policies and a trigger that prevents users from changing their own plan tier.
-- **Typed configuration** — environment validation with Zod.
-- **CI checks** — GitHub Actions runs TypeScript and production-build checks.
+**SaaS Starter — Midtrans** is a starter project for developers who want to build a subscription-based web application. It brings together authentication, a protected dashboard, subscription plan examples, and a Midtrans Snap checkout flow.
 
-### What is not included yet
+Instead of starting from an empty folder, use this as a foundation and customize it for your own SaaS idea.
 
-This starter does not provide recurring automatic billing, a complete subscription lifecycle, invoices, team management, usage metering, or production-grade payment guarantees. These need to be designed and implemented for your product.
+> [!WARNING]
+> **Early development — not production-ready.** Payment integration is intended for the Midtrans Sandbox only. The live demo is for interface preview; checkout may be disabled. Do not enter sensitive or real payment information.
 
-## Tech stack
+## 🧰 Built with
 
-| Layer | Technology |
+<div align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,supabase,postgres&theme=dark" alt="Technology stack icons">
+  </a>
+</div>
+
+| Technology | Role |
 | --- | --- |
-| Framework | Next.js 15 App Router |
-| UI | React 19, Tailwind CSS |
-| Language | TypeScript |
-| Authentication | Supabase Auth |
-| Database | Supabase PostgreSQL |
-| Payment | Midtrans Snap |
-| Validation | Zod |
-| CI | GitHub Actions |
+| Next.js 15 | Full-stack React framework and App Router |
+| React 19 | User interface |
+| TypeScript | Type-safe application code |
+| Tailwind CSS | Styling |
+| Supabase Auth | User authentication |
+| Supabase PostgreSQL | Database and Row Level Security |
+| Midtrans Snap | Payment checkout |
+| Zod | Environment validation |
+
+## 🚀 Features
+
+- 🔐 **Authentication** — sign up and sign in with Supabase Auth.
+- 📊 **Protected dashboard** — dashboard pages for authenticated users.
+- 💳 **Payment checkout** — Midtrans Snap transaction creation.
+- 📦 **Plan examples** — Free, Pro, and Enterprise plan records.
+- 🧾 **Transaction history** — basic payment history in the dashboard.
+- 🛡️ **Database safeguards** — Row Level Security and a trigger preventing users from changing their own plan tier.
+- ⚙️ **Validated configuration** — environment variables validated with Zod.
+- 🔄 **Continuous integration** — GitHub Actions checks TypeScript and production builds.
+
+### Not included yet
+
+This is a starter, not a complete subscription platform. Automatic recurring billing, invoices, team management, usage metering, and a full subscription lifecycle still need to be implemented.
 
 ---
 
-## Getting started
+## ⚡ Quick start
 
-Follow these steps in order. You will need **Node.js 22 or newer**, npm, Git, and your own Supabase project.
+### Requirements
 
-### 1. Download the project
+Make sure you have:
+
+- [Node.js 22 or newer](https://nodejs.org/)
+- npm
+- Git
+- A [Supabase](https://supabase.com/) project
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Bagaas-ind/Saas-starter-midtrans.git
@@ -56,9 +101,9 @@ cd Saas-starter-midtrans
 npm ci
 ```
 
-### 2. Create your environment file
+### 2. Configure environment variables
 
-Copy the example file:
+Create your local environment file:
 
 **Windows PowerShell**
 ```powershell
@@ -75,9 +120,9 @@ copy .env.example .env.local
 cp .env.example .env.local
 ```
 
-Open `.env.local` and fill in the values from your own provider accounts:
+Fill in `.env.local` with your own credentials:
 
-```dotenv
+```env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY
@@ -89,119 +134,93 @@ MIDTRANS_IS_PRODUCTION=false
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-Keep `SUPABASE_SERVICE_ROLE_KEY` and `MIDTRANS_SERVER_KEY` private. Never commit `.env.local` or expose server-side secrets in browser code.
+> 🔒 Never commit `.env.local`. Keep `SUPABASE_SERVICE_ROLE_KEY` and `MIDTRANS_SERVER_KEY` private.
 
-### 3. Set up the database
+### 3. Prepare Supabase
 
 1. Create a project in Supabase.
-2. Open its **SQL Editor**.
-3. Open `supabase/schema.sql` from this repository.
-4. Copy the full SQL file into the SQL Editor and run it.
-5. Confirm that the `plans`, `profiles`, and `transactions` tables were created.
+2. Open **SQL Editor** in your Supabase dashboard.
+3. Open `supabase/schema.sql` in this repository.
+4. Copy the complete SQL file into the SQL Editor and run it.
+5. Confirm that the `plans`, `profiles`, and `transactions` tables exist.
 
-The SQL script also configures the signup profile trigger, initial plan records, and Row Level Security policies.
+The schema also sets up the signup profile trigger, initial plans, and Row Level Security policies.
 
-### 4. Configure Supabase authentication
+### 4. Configure authentication URLs
 
-In your Supabase project's **Authentication → URL Configuration** settings:
+In **Supabase → Authentication → URL Configuration**:
 
-- Set the local Site URL to `http://localhost:3000`.
+- Set the Site URL to `http://localhost:3000`.
 - Add `http://localhost:3000/auth/callback` to the allowed redirect URLs.
 
-When you deploy your own instance, add your HTTPS domain and its `/auth/callback` URL too.
-
-### 5. Start the app
+### 5. Run the development server
 
 ```bash
 npm run dev
 ```
 
-Open **http://localhost:3000** in your browser.
+Open **http://localhost:3000**.
 
 ---
 
-## Try the application
+## 🧪 Try it locally
 
-Once the app is running:
-
-1. Open the landing page.
-2. Create an account with an email address you control.
-3. Confirm your email if email confirmation is enabled in Supabase.
+1. Open the application.
+2. Register with an email address you control.
+3. Confirm your email if confirmation is enabled in Supabase.
 4. Sign in and open the dashboard.
-5. Check that your account starts with the Free plan.
-6. Configure Midtrans Sandbox before trying a paid plan.
+5. Check that the account starts on the Free plan.
+6. Configure Midtrans Sandbox before testing a paid plan.
 
-If signup succeeds but no profile appears, check the Supabase Auth user record, the database trigger, and the Supabase logs.
+If a profile is not created after signup, inspect the Supabase Auth user, database trigger, and Supabase logs.
 
-## Test payments with Midtrans Sandbox
+## 💸 Test payments with Midtrans Sandbox
 
-**Do not use production payment credentials while developing.**
+**Use Sandbox credentials only. Do not use real customer payment data.**
 
-1. Sign in to your Midtrans dashboard and switch to the **Sandbox** environment.
-2. Copy your Sandbox Server Key and Client Key into `.env.local`.
+1. Open your Midtrans dashboard and switch to **Sandbox**.
+2. Copy the Sandbox Server Key and Client Key into `.env.local`.
 3. Keep `MIDTRANS_IS_PRODUCTION=false`.
-4. Configure the Midtrans notification URL as `https://YOUR_PUBLIC_HOST/api/payment/webhook`.
-5. For local testing, expose your local app through an HTTPS tunnel. Midtrans cannot send notifications to `localhost`.
-6. Restart the development server, sign in, and select a paid plan.
-7. Complete the checkout using test payment details from the Midtrans Sandbox Simulator.
-8. Wait for the server notification, then refresh the dashboard to inspect the transaction status.
+4. Set the notification URL to `https://YOUR_PUBLIC_HOST/api/payment/webhook`.
+5. For local testing, expose your app through an HTTPS tunnel. Midtrans cannot call `localhost`.
+6. Restart the development server and select a paid plan.
+7. Complete checkout with test details from the Midtrans Sandbox Simulator.
+8. Check the dashboard for the updated transaction status.
 
-Sandbox transactions are test transactions, not real charges. Never test with real customer payment data.
-
-## How payment processing works
+### Payment flow
 
 ```text
-User selects a paid plan
-        |
-        v
-POST /api/payment/create
-        |
-        +--> Verify signed-in user
-        +--> Validate plan and read database records
-        +--> Create a Midtrans Snap transaction
-        +--> Save a pending transaction
-        |
-        v
-Browser opens Midtrans Snap checkout
-        |
-        v
-Midtrans sends server notification
-        |
-        v
-POST /api/payment/webhook
-        |
-        +--> Verify notification signature
-        +--> Find the matching transaction
-        +--> Map payment status
-        +--> Update transaction and plan when paid
-        |
-        v
-Supabase PostgreSQL → Dashboard
+┌────────────────────┐
+│ User selects a plan│
+└─────────┬──────────┘
+          ▼
+┌────────────────────────────┐
+│ POST /api/payment/create   │
+│ Validate user and plan     │
+│ Create Snap transaction   │
+│ Save pending transaction  │
+└─────────┬──────────────────┘
+          ▼
+┌────────────────────────────┐
+│    Midtrans Snap Checkout  │
+└─────────┬──────────────────┘
+          ▼
+┌────────────────────────────┐
+│ POST /api/payment/webhook  │
+│ Verify notification        │
+│ Update transaction status  │
+└─────────┬──────────────────┘
+          ▼
+┌────────────────────────────┐
+│ Supabase → User Dashboard  │
+└────────────────────────────┘
 ```
 
-The browser redirect is not proof of payment. This starter uses the server-side Midtrans notification to update the transaction and plan. The webhook still needs stronger amount reconciliation and atomic, concurrency-safe fulfillment before production use.
+The browser redirect is not proof of payment. The server-side notification is used to update the transaction. Before production, webhook handling still needs stronger amount reconciliation and atomic, concurrency-safe fulfillment.
 
 ---
 
-## Useful commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm ci` | Install dependencies from the lockfile |
-| `npm run dev` | Start the development server |
-| `npx tsc --noEmit` | Check TypeScript types |
-| `npm run lint` | Run the configured lint command |
-| `npm run build` | Create a production build |
-| `npm run start` | Run the production build locally |
-
-Before submitting a change, run:
-
-```bash
-npx tsc --noEmit
-npm run build
-```
-
-## Project structure
+## 📁 Project structure
 
 ```text
 .
@@ -209,10 +228,9 @@ npm run build
 │   └── workflows/       # CI workflow
 ├── src/
 │   ├── app/
-│   │   ├── api/payment/ # Create payment and webhook endpoints
+│   │   ├── api/payment/ # Payment creation and webhook
 │   │   ├── auth/        # Authentication callback
-│   │   ├── dashboard/   # Protected dashboard
-│   │   └── ...          # App pages and layouts
+│   │   └── dashboard/   # Protected dashboard
 │   ├── components/      # Reusable UI components
 │   ├── lib/
 │   │   ├── supabase/    # Supabase clients
@@ -221,44 +239,68 @@ npm run build
 │   ├── middleware.ts
 │   └── types/
 ├── supabase/
-│   └── schema.sql      # Database schema and policies
+│   └── schema.sql       # Database schema and policies
 ├── .env.example
 ├── CONTRIBUTING.md
 ├── SECURITY.md
 └── package.json
 ```
 
-## Before production
+## 🛠️ Available commands
 
-The project is **not production-ready**. At minimum, complete and test these items before handling real payments or customer data:
+| Command | Description |
+| --- | --- |
+| `npm ci` | Install dependencies |
+| `npm run dev` | Start development server |
+| `npx tsc --noEmit` | Check TypeScript types |
+| `npm run lint` | Run lint command |
+| `npm run build` | Build for production |
+| `npm run start` | Run production build locally |
+
+Before opening a Pull Request, run:
+
+```bash
+npx tsc --noEmit
+npm run build
+```
+
+## 🔐 Production checklist
+
+Do not deploy this starter to handle real payments until the relevant security and payment work is complete.
 
 - [x] Prevent users from changing their own `plan_tier` through client-side database access.
-- [ ] Reconcile webhook amount, currency, order ID, payment status, and expected plan price with the saved transaction.
-- [ ] Make webhook fulfillment atomic and safe against duplicate or simultaneous notifications.
-- [ ] Review all Midtrans payment and fraud-status transitions.
+- [ ] Reconcile webhook amount, currency, order ID, status, and expected plan price.
+- [ ] Make webhook fulfillment atomic and safe against duplicate notifications.
+- [ ] Review Midtrans payment and fraud-status transitions.
 - [ ] Add rate limiting, request-size limits, and robust error handling.
 - [ ] Review database permissions, RLS policies, and privileged server operations.
 - [ ] Add automated unit, integration, and webhook tests.
-- [ ] Add monitoring, alerting, backups, and a credential-rotation procedure.
+- [ ] Add monitoring, alerting, backups, and credential rotation.
 - [ ] Verify HTTPS, callback URLs, privacy requirements, and applicable legal obligations.
 
-Use Sandbox credentials and non-sensitive test data until the checklist is complete. See `SECURITY.md` for the vulnerability-reporting process.
+See [SECURITY.md](SECURITY.md) for the vulnerability-reporting process.
 
-## Contributing
+## 🤝 Contributing
 
-Bug fixes, tests, documentation improvements, accessibility fixes, and useful features are welcome.
+Contributions are welcome — bug fixes, tests, documentation, accessibility improvements, and useful features.
 
 1. Create a branch for your change.
 2. Make a focused improvement.
 3. Run the checks listed above.
-4. Open a Pull Request and describe what you changed and how you tested it.
+4. Open a Pull Request with a clear description and test results.
 
-Please read `CONTRIBUTING.md` before submitting a contribution. Report security vulnerabilities privately using the process in `SECURITY.md`.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing.
 
-## License
+## 📄 License
 
-This project is released under the **MIT License**. See the `LICENSE` file for the full terms. Third-party dependencies and services remain subject to their own licenses, pricing, and terms.
+Released under the [MIT License](LICENSE).
 
-## Disclaimer
+---
 
-Provided “as is”, without warranty. You are responsible for reviewing the code, securing your deployment, complying with provider terms, and thoroughly testing payment behavior before using this project with real customers.
+<div align="center">
+
+**Built as a starting point. Make it yours.** ⚡
+
+<sub>Provided “as is”, without warranty. Review, secure, and test the application before using it with real customers.</sub>
+
+</div>
