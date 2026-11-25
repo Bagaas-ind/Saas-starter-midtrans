@@ -124,7 +124,7 @@ export function CheckoutButton({
       autoCheckoutStarted.current = true;
       void handleCheckout();
     }
-  }, [isAuthenticated, planId, searchParams]);
+  }, [handleCheckout, isAuthenticated, planId, searchParams]);
 
   let buttonLabel = `Upgrade to ${planName}`;
   if (!isAuthenticated) {
