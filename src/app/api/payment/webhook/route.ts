@@ -67,6 +67,22 @@ export async function POST(request: Request) {
       );
     }
 
+    // The signed amount must also match the amount recorded when checkout was created.
+    // A valid signature alone does not prove this order was created for this amount.
+    const notifiedAmount = Number(gross_amount);
+    const recordedAmount = Number(transaction.amount);
+
+    if (
+      !Number.isFinite(notifiedAmount) ||
+      !Number.isFinite(recordedAmount) ||
+      notifiedAmount !== recordedAmount
+    ) {
+      return NextResponse.json(
+        { error: "Webhook amount does not match the recorded transaction" },
+        { status: 400 }
+      );
+    }
+
     // 3. Idempotency guard: if already paid, do not re-process
     if (transaction.status === "paid") {
       return NextResponse.json({
