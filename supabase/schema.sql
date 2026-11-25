@@ -197,3 +197,71 @@ CREATE TRIGGER prevent_profile_plan_tier_self_upgrade
     BEFORE UPDATE OF plan_tier ON public.profiles
     FOR EACH ROW
     EXECUTE FUNCTION public.prevent_profile_plan_tier_self_upgrade();
+
+
+-- ----------------------------------------------------------------------------
+-- 6. ATOMIC PAYMENT FULFILLMENT
+-- ----------------------------------------------------------------------------
+-- This RPC is called only by the server using the Supabase service_role key.
+-- The UPDATE acquires a row lock. Concurrent notifications for the same order
+-- cannot both fulfill the entitlement: only the first UPDATE from pending
+-- returns a row and can update profiles.plan_tier.
+CREATE OR REPLACE FUNCTION public.fulfill_transaction(
+    p_order_id TEXT,
+    p_new_status TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_transaction public.transactions%ROWTYPE;
+BEGIN
+    IF p_new_status IS NULL OR p_new_status NOT IN ('pending', 'paid', 'failed', 'expired') THEN
+        RAISE EXCEPTION 'Unsupported transaction status: %', p_new_status
+            USING ERRCODE = '22023';
+    END IF;
+
+    UPDATE public.transactions
+       SET status = p_new_status,
+           updated_at = NOW()
+     WHERE order_id = p_order_id
+       AND status NOT IN ('paid', 'settlement')
+       AND status = 'pending'
+    RETURNING * INTO v_transaction;
+
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object(
+            'already_processed', true,
+            'order_id', p_order_id
+        );
+    END IF;
+
+    IF p_new_status = 'paid' THEN
+        UPDATE public.profiles
+           SET plan_tier = v_transaction.plan_id,
+               updated_at = NOW()
+         WHERE id = v_transaction.user_id;
+
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Profile not found for transaction order %', p_order_id
+                USING ERRCODE = 'P0002';
+        END IF;
+    END IF;
+
+    RETURN jsonb_build_object(
+        'already_processed', false,
+        'order_id', v_transaction.order_id,
+        'status', p_new_status,
+        'user_id', v_transaction.user_id,
+        'plan_id', v_transaction.plan_id
+    );
+END;
+$$;
+
+-- Do not expose this privileged function to browser roles.
+REVOKE ALL ON FUNCTION public.fulfill_transaction(TEXT, TEXT)
+    FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.fulfill_transaction(TEXT, TEXT)
+    TO service_role;

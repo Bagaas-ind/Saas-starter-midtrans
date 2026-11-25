@@ -218,6 +218,14 @@ export default async function LandingPage() {
                   <span>100% Type-Safe TypeScript</span>
                 </div>
               </div>
+              <a
+                href="https://github.com/Bagaas-ind/Saas-starter-midtrans#-checklist-sebelum-produksi"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1.5 text-xs font-semibold text-amber-800 transition hover:bg-amber-100"
+              >
+                Security checklist · hardening in progress
+              </a>
             </div>
           </div>
         </section>
@@ -275,7 +283,7 @@ export default async function LandingPage() {
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   Accept QRIS, BCA/BNI/BRI/Mandiri Virtual Accounts, GoPay, and
-                  ShopeePay with idempotent SHA-512 webhook fulfillment.
+                  Webhook Idempotency (partial — concurrent protection in progress).
                 </p>
               </div>
 
@@ -315,7 +323,7 @@ export default async function LandingPage() {
 2. Server creates order -> Inserts 'pending' row in Supabase transactions table
 3. Midtrans Snap Popup  -> User pays via QRIS / Virtual Account / E-Wallet
 4. Midtrans Webhook     -> Verifies SHA-512(order_id + status_code + gross_amount + server_key)
-5. Atomic Fulfillment   -> Marks transaction 'paid' & upgrades profiles.plan_tier`}
+5. Atomic Fulfillment (in progress) -> Database RPC updates transaction & plan together`}
               </pre>
             </div>
           </div>

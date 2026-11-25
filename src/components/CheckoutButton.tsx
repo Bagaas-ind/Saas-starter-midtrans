@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2 } from "lucide-react";
 import type { PlanTier } from "@/types/database";
@@ -41,6 +41,7 @@ export function CheckoutButton({
   className = "",
 }: CheckoutButtonProps) {
   const router = useRouter();
+  const autoCheckoutStarted = useRef(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -112,6 +113,17 @@ export function CheckoutButton({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      new URLSearchParams(window.location.search).get("checkout") === planId &&
+      !autoCheckoutStarted.current
+    ) {
+      autoCheckoutStarted.current = true;
+      void handleCheckout();
+    }
+  }, [handleCheckout, isAuthenticated, planId]);
 
   let buttonLabel = `Upgrade to ${planName}`;
   if (!isAuthenticated) {

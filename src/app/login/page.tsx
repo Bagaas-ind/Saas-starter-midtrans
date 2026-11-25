@@ -10,7 +10,12 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
-  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const requestedPlan = searchParams.get("plan");
+  const checkoutRedirect =
+    requestedPlan === "pro" || requestedPlan === "enterprise"
+      ? `/?checkout=${requestedPlan}#pricing`
+      : "/dashboard";
+  const redirectTo = searchParams.get("redirectTo") || checkoutRedirect;
 
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [fullName, setFullName] = useState("");
