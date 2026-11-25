@@ -86,7 +86,7 @@ export async function createMidtransSnapTransaction(
 
 /**
  * Verifies Midtrans webhook authenticity using SHA-512:
- * SHA512(order_id + status_code + gross_amount + server_key)
+ * SHA512(order_id + status_code + gross_amount + signature_secret_key)
  */
 export function verifyMidtransSignature(params: {
   orderId: string;
@@ -95,7 +95,7 @@ export function verifyMidtransSignature(params: {
   signatureKey: string;
 }): boolean {
   const env = getServerEnv();
-  const rawString = `${params.orderId}${params.statusCode}${params.grossAmount}${env.MIDTRANS_SERVER_KEY}`;
+  const rawString = `${params.orderId}${params.statusCode}${params.grossAmount}${env.MIDTRANS_SIGNATURE_SECRET_KEY}`;
   const expectedSignature = crypto
     .createHash("sha512")
     .update(rawString)
