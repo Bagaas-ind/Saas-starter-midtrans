@@ -1,20 +1,16 @@
-<!--
-  SaaS Starter — Midtrans
-  A clean, visual README for the project.
--->
-
+<!-- Logo proyek -->
 <div align="center">
 
-# ⚡ SaaS Starter — Midtrans
+<img src="docs/assets/saas-starter-logo.svg" alt="Logo SaaS Starter Midtrans" width="620">
 
-### A modern SaaS starter built with Next.js, Supabase, PostgreSQL, and Midtrans.
+### Starter kit SaaS modern dengan Next.js, Supabase, PostgreSQL, dan Midtrans.
 
 <p>
-  <a href="https://saas-starter-midtrans.vercel.app/"><strong>🌐 Live Demo</strong></a>
+  <a href="https://saas-starter-midtrans.vercel.app/"><strong>🌐 Lihat Demo</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/Bagaas-ind/Saas-starter-midtrans/issues">🐛 Report a Bug</a>
+  <a href="https://github.com/Bagaas-ind/Saas-starter-midtrans/issues">🐛 Laporkan Bug</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/Bagaas-ind/Saas-starter-midtrans/pulls">🤝 Contribute</a>
+  <a href="https://github.com/Bagaas-ind/Saas-starter-midtrans/pulls">🤝 Kontribusi</a>
 </p>
 
 <p>
@@ -28,72 +24,76 @@
 </p>
 
 <p>
-  <img src="https://img.shields.io/badge/Status-Early_Development-orange" alt="Early development">
-  <img src="https://img.shields.io/badge/Payments-Sandbox_Only-yellow" alt="Sandbox only">
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
+  <img src="https://img.shields.io/badge/Status-Pengembangan-orange" alt="Dalam pengembangan">
+  <img src="https://img.shields.io/badge/Pembayaran-Sandbox_Only-yellow" alt="Sandbox saja">
+  <img src="https://img.shields.io/badge/Lisensi-MIT-green" alt="Lisensi MIT">
 </p>
+
+**Bahasa:** 🇮🇩 Indonesia · [🇬🇧 English](README.en.md)
 
 </div>
 
 ---
 
-## ✨ Overview
+## 📌 Tentang Proyek
 
-**SaaS Starter — Midtrans** is a starter project for developers who want to build a subscription-based web application. It brings together authentication, a protected dashboard, subscription plan examples, and a Midtrans Snap checkout flow.
+**SaaS Starter — Midtrans** adalah starter kit untuk developer yang ingin membangun aplikasi berbasis SaaS atau langganan. Proyek ini menggabungkan autentikasi pengguna, dashboard terlindungi, contoh paket langganan, dan alur checkout pembayaran menggunakan Midtrans Snap.
 
-Instead of starting from an empty folder, use this as a foundation and customize it for your own SaaS idea.
+Gunakan proyek ini sebagai fondasi awal, lalu sesuaikan fitur dan tampilannya dengan kebutuhan produk SaaS yang ingin kamu bangun.
 
 > [!WARNING]
-> **Early development — not production-ready.** Payment integration is intended for the Midtrans Sandbox only. The live demo is for interface preview; checkout may be disabled. Do not enter sensitive or real payment information.
+> **Masih dalam tahap pengembangan dan belum siap untuk produksi.** Integrasi pembayaran ditujukan untuk Midtrans Sandbox. Demo publik hanya untuk melihat antarmuka; fitur checkout dapat dinonaktifkan. Jangan masukkan data pribadi atau pembayaran yang sensitif.
 
-## 🧰 Built with
+## 🧰 Teknologi yang Digunakan
 
 <div align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,supabase,postgres&theme=dark" alt="Technology stack icons">
+    <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,supabase,postgres&theme=dark" alt="Ikon teknologi yang digunakan">
   </a>
 </div>
 
-| Technology | Role |
+| Teknologi | Kegunaan |
 | --- | --- |
-| Next.js 15 | Full-stack React framework and App Router |
-| React 19 | User interface |
-| TypeScript | Type-safe application code |
-| Tailwind CSS | Styling |
-| Supabase Auth | User authentication |
-| Supabase PostgreSQL | Database and Row Level Security |
-| Midtrans Snap | Payment checkout |
-| Zod | Environment validation |
+| Next.js 15 | Framework React dan App Router |
+| React 19 | Membangun antarmuka pengguna |
+| TypeScript | Menulis kode dengan sistem tipe |
+| Tailwind CSS | Styling antarmuka |
+| Supabase Auth | Autentikasi pengguna |
+| Supabase PostgreSQL | Database dan Row Level Security |
+| Midtrans Snap | Checkout pembayaran |
+| Zod | Validasi konfigurasi environment |
 
-## 🚀 Features
+## ✨ Fitur
 
-- 🔐 **Authentication** — sign up and sign in with Supabase Auth.
-- 📊 **Protected dashboard** — dashboard pages for authenticated users.
-- 💳 **Payment checkout** — Midtrans Snap transaction creation.
-- 📦 **Plan examples** — Free, Pro, and Enterprise plan records.
-- 🧾 **Transaction history** — basic payment history in the dashboard.
-- 🛡️ **Database safeguards** — Row Level Security and a trigger preventing users from changing their own plan tier.
-- ⚙️ **Validated configuration** — environment variables validated with Zod.
-- 🔄 **Continuous integration** — GitHub Actions checks TypeScript and production builds.
+- 🔐 **Autentikasi** — registrasi dan login menggunakan Supabase Auth.
+- 📊 **Dashboard terlindungi** — halaman dashboard hanya untuk pengguna yang sudah login.
+- 💳 **Checkout pembayaran** — pembuatan transaksi melalui Midtrans Snap.
+- 📦 **Contoh paket langganan** — data paket Free, Pro, dan Enterprise.
+- 🧾 **Riwayat transaksi** — menampilkan riwayat pembayaran dasar di dashboard.
+- 🛡️ **Keamanan database** — Row Level Security dan trigger untuk mencegah pengguna mengubah plan tier miliknya sendiri.
+- ⚙️ **Validasi konfigurasi** — environment variable divalidasi menggunakan Zod.
+- 🔄 **Continuous Integration** — GitHub Actions menjalankan pemeriksaan TypeScript dan production build.
 
-### Not included yet
+### Fitur yang belum tersedia
 
-This is a starter, not a complete subscription platform. Automatic recurring billing, invoices, team management, usage metering, and a full subscription lifecycle still need to be implemented.
+Proyek ini belum menjadi platform langganan lengkap. Penagihan otomatis berulang, invoice, manajemen tim, pencatatan penggunaan, dan siklus langganan secara menyeluruh masih perlu dikembangkan.
 
 ---
 
-## ⚡ Quick start
+## 🚀 Cara Menjalankan Proyek
 
-### Requirements
+### Persyaratan
 
-Make sure you have:
+Pastikan perangkatmu sudah memiliki:
 
-- [Node.js 22 or newer](https://nodejs.org/)
+- [Node.js versi 22 atau lebih baru](https://nodejs.org/)
 - npm
 - Git
-- A [Supabase](https://supabase.com/) project
+- Akun dan project [Supabase](https://supabase.com/)
 
-### 1. Clone the repository
+### 1. Clone repository
+
+Jalankan perintah berikut di terminal:
 
 ```bash
 git clone https://github.com/Bagaas-ind/Saas-starter-midtrans.git
@@ -101,9 +101,9 @@ cd Saas-starter-midtrans
 npm ci
 ```
 
-### 2. Configure environment variables
+### 2. Atur environment variable
 
-Create your local environment file:
+Buat file `.env.local` dari file contoh.
 
 **Windows PowerShell**
 ```powershell
@@ -120,7 +120,7 @@ copy .env.example .env.local
 cp .env.example .env.local
 ```
 
-Fill in `.env.local` with your own credentials:
+Buka file `.env.local`, lalu isi dengan kredensial milikmu:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
@@ -134,173 +134,177 @@ MIDTRANS_IS_PRODUCTION=false
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-> 🔒 Never commit `.env.local`. Keep `SUPABASE_SERVICE_ROLE_KEY` and `MIDTRANS_SERVER_KEY` private.
+> 🔒 Jangan pernah mengunggah file `.env.local` ke GitHub. Jaga kerahasiaan `SUPABASE_SERVICE_ROLE_KEY` dan `MIDTRANS_SERVER_KEY`.
 
-### 3. Prepare Supabase
+### 3. Siapkan database Supabase
 
-1. Create a project in Supabase.
-2. Open **SQL Editor** in your Supabase dashboard.
-3. Open `supabase/schema.sql` in this repository.
-4. Copy the complete SQL file into the SQL Editor and run it.
-5. Confirm that the `plans`, `profiles`, and `transactions` tables exist.
+1. Buat project baru di Supabase.
+2. Buka menu **SQL Editor** pada dashboard Supabase.
+3. Buka file `supabase/schema.sql` dari repository ini.
+4. Salin seluruh isi file SQL tersebut ke SQL Editor.
+5. Jalankan query dan pastikan tabel `plans`, `profiles`, dan `transactions` berhasil dibuat.
 
-The schema also sets up the signup profile trigger, initial plans, and Row Level Security policies.
+Schema tersebut juga mengatur trigger pembuatan profil saat registrasi, data paket awal, dan kebijakan Row Level Security.
 
-### 4. Configure authentication URLs
+### 4. Atur URL autentikasi
 
-In **Supabase → Authentication → URL Configuration**:
+Buka **Supabase → Authentication → URL Configuration**:
 
-- Set the Site URL to `http://localhost:3000`.
-- Add `http://localhost:3000/auth/callback` to the allowed redirect URLs.
+- Atur Site URL menjadi `http://localhost:3000`.
+- Tambahkan `http://localhost:3000/auth/callback` ke daftar Allowed Redirect URLs.
 
-### 5. Run the development server
+### 5. Jalankan aplikasi
 
 ```bash
 npm run dev
 ```
 
-Open **http://localhost:3000**.
+Buka browser dan akses **http://localhost:3000**.
 
 ---
 
-## 🧪 Try it locally
+## 🧪 Mencoba Aplikasi
 
-1. Open the application.
-2. Register with an email address you control.
-3. Confirm your email if confirmation is enabled in Supabase.
-4. Sign in and open the dashboard.
-5. Check that the account starts on the Free plan.
-6. Configure Midtrans Sandbox before testing a paid plan.
+Setelah aplikasi berjalan:
 
-If a profile is not created after signup, inspect the Supabase Auth user, database trigger, and Supabase logs.
+1. Buka halaman utama.
+2. Daftarkan akun menggunakan email yang dapat kamu akses.
+3. Lakukan konfirmasi email jika fitur tersebut diaktifkan di Supabase.
+4. Login dan buka dashboard.
+5. Pastikan akun baru menggunakan paket Free.
+6. Atur Midtrans Sandbox sebelum mencoba paket berbayar.
 
-## 💸 Test payments with Midtrans Sandbox
+Jika profil tidak terbentuk setelah registrasi, periksa data pengguna di Supabase Auth, trigger database, dan log Supabase.
 
-**Use Sandbox credentials only. Do not use real customer payment data.**
+## 💸 Pengujian Pembayaran Midtrans Sandbox
 
-1. Open your Midtrans dashboard and switch to **Sandbox**.
-2. Copy the Sandbox Server Key and Client Key into `.env.local`.
-3. Keep `MIDTRANS_IS_PRODUCTION=false`.
-4. Set the notification URL to `https://YOUR_PUBLIC_HOST/api/payment/webhook`.
-5. For local testing, expose your app through an HTTPS tunnel. Midtrans cannot call `localhost`.
-6. Restart the development server and select a paid plan.
-7. Complete checkout with test details from the Midtrans Sandbox Simulator.
-8. Check the dashboard for the updated transaction status.
+**Gunakan kredensial Sandbox saja. Jangan gunakan data pembayaran pelanggan sungguhan.**
 
-### Payment flow
+1. Buka dashboard Midtrans dan pilih lingkungan **Sandbox**.
+2. Salin Sandbox Server Key dan Client Key ke file `.env.local`.
+3. Pastikan `MIDTRANS_IS_PRODUCTION=false`.
+4. Atur URL notifikasi menjadi `https://YOUR_PUBLIC_HOST/api/payment/webhook`.
+5. Untuk pengujian lokal, gunakan HTTPS tunnel agar Midtrans dapat mengakses aplikasi. Midtrans tidak dapat mengirim notifikasi ke alamat `localhost`.
+6. Restart server, login, lalu pilih paket berbayar.
+7. Selesaikan checkout menggunakan data pengujian dari Midtrans Sandbox Simulator.
+8. Periksa status transaksi melalui dashboard.
+
+### Alur pembayaran
 
 ```text
-┌────────────────────┐
-│ User selects a plan│
-└─────────┬──────────┘
-          ▼
-┌────────────────────────────┐
-│ POST /api/payment/create   │
-│ Validate user and plan     │
-│ Create Snap transaction   │
-│ Save pending transaction  │
-└─────────┬──────────────────┘
-          ▼
-┌────────────────────────────┐
-│    Midtrans Snap Checkout  │
-└─────────┬──────────────────┘
-          ▼
-┌────────────────────────────┐
-│ POST /api/payment/webhook  │
-│ Verify notification        │
-│ Update transaction status  │
-└─────────┬──────────────────┘
-          ▼
-┌────────────────────────────┐
-│ Supabase → User Dashboard  │
-└────────────────────────────┘
+┌────────────────────────┐
+│ Pengguna memilih paket │
+└───────────┬────────────┘
+            ▼
+┌─────────────────────────────┐
+│ POST /api/payment/create    │
+│ Validasi pengguna dan paket │
+│ Buat transaksi Snap         │
+│ Simpan transaksi pending    │
+└───────────┬─────────────────┘
+            ▼
+┌─────────────────────────────┐
+│     Midtrans Snap Checkout  │
+└───────────┬─────────────────┘
+            ▼
+┌─────────────────────────────┐
+│ POST /api/payment/webhook   │
+│ Verifikasi notifikasi       │
+│ Perbarui status transaksi   │
+└───────────┬─────────────────┘
+            ▼
+┌─────────────────────────────┐
+│ Supabase → Dashboard User   │
+└─────────────────────────────┘
 ```
 
-The browser redirect is not proof of payment. The server-side notification is used to update the transaction. Before production, webhook handling still needs stronger amount reconciliation and atomic, concurrency-safe fulfillment.
+Redirect browser bukan bukti bahwa pembayaran berhasil. Status transaksi diperbarui melalui notifikasi server Midtrans. Sebelum digunakan di produksi, proses webhook masih perlu penguatan validasi nominal dan pemrosesan yang aman terhadap notifikasi ganda atau bersamaan.
 
 ---
 
-## 📁 Project structure
+## 📁 Struktur Folder
 
 ```text
 .
 ├── .github/
-│   └── workflows/       # CI workflow
+│   └── workflows/       # Workflow CI
+├── docs/
+│   └── assets/          # Logo proyek
 ├── src/
 │   ├── app/
-│   │   ├── api/payment/ # Payment creation and webhook
-│   │   ├── auth/        # Authentication callback
-│   │   └── dashboard/   # Protected dashboard
-│   ├── components/      # Reusable UI components
+│   │   ├── api/payment/ # Endpoint pembayaran dan webhook
+│   │   ├── auth/        # Callback autentikasi
+│   │   └── dashboard/   # Dashboard pengguna
+│   ├── components/      # Komponen UI
 │   ├── lib/
-│   │   ├── supabase/    # Supabase clients
-│   │   ├── env.ts       # Environment validation
-│   │   └── midtrans.ts  # Midtrans integration
+│   │   ├── supabase/    # Supabase client
+│   │   ├── env.ts       # Validasi environment
+│   │   └── midtrans.ts  # Integrasi Midtrans
 │   ├── middleware.ts
 │   └── types/
 ├── supabase/
-│   └── schema.sql       # Database schema and policies
+│   └── schema.sql       # Schema dan kebijakan database
 ├── .env.example
 ├── CONTRIBUTING.md
 ├── SECURITY.md
 └── package.json
 ```
 
-## 🛠️ Available commands
+## 🛠️ Perintah yang Tersedia
 
-| Command | Description |
+| Perintah | Kegunaan |
 | --- | --- |
-| `npm ci` | Install dependencies |
-| `npm run dev` | Start development server |
-| `npx tsc --noEmit` | Check TypeScript types |
-| `npm run lint` | Run lint command |
-| `npm run build` | Build for production |
-| `npm run start` | Run production build locally |
+| `npm ci` | Menginstal dependency |
+| `npm run dev` | Menjalankan development server |
+| `npx tsc --noEmit` | Memeriksa tipe TypeScript |
+| `npm run lint` | Menjalankan perintah lint |
+| `npm run build` | Membuat production build |
+| `npm run start` | Menjalankan production build secara lokal |
 
-Before opening a Pull Request, run:
+Sebelum membuat Pull Request, jalankan:
 
 ```bash
 npx tsc --noEmit
 npm run build
 ```
 
-## 🔐 Production checklist
+## 🔐 Checklist Sebelum Produksi
 
-Do not deploy this starter to handle real payments until the relevant security and payment work is complete.
+Jangan gunakan starter kit ini untuk menangani pembayaran sungguhan sebelum pekerjaan keamanan dan pembayaran berikut diselesaikan.
 
-- [x] Prevent users from changing their own `plan_tier` through client-side database access.
-- [ ] Reconcile webhook amount, currency, order ID, status, and expected plan price.
-- [ ] Make webhook fulfillment atomic and safe against duplicate notifications.
-- [ ] Review Midtrans payment and fraud-status transitions.
-- [ ] Add rate limiting, request-size limits, and robust error handling.
-- [ ] Review database permissions, RLS policies, and privileged server operations.
-- [ ] Add automated unit, integration, and webhook tests.
-- [ ] Add monitoring, alerting, backups, and credential rotation.
-- [ ] Verify HTTPS, callback URLs, privacy requirements, and applicable legal obligations.
+- [x] Mencegah pengguna mengubah `plan_tier` miliknya melalui akses database dari sisi klien.
+- [ ] Validasi nominal, mata uang, order ID, status, dan harga paket pada webhook.
+- [ ] Pastikan pemrosesan webhook aman terhadap notifikasi duplikat dan proses bersamaan.
+- [ ] Tinjau seluruh transisi status pembayaran dan fraud dari Midtrans.
+- [ ] Tambahkan rate limiting, batas ukuran request, dan penanganan error.
+- [ ] Tinjau permission database, kebijakan RLS, dan operasi server dengan hak istimewa.
+- [ ] Tambahkan unit test, integration test, dan webhook test.
+- [ ] Tambahkan monitoring, alerting, backup, dan prosedur rotasi kredensial.
+- [ ] Verifikasi HTTPS, callback URL, privasi, dan kewajiban hukum yang berlaku.
 
-See [SECURITY.md](SECURITY.md) for the vulnerability-reporting process.
+Baca [SECURITY.md](SECURITY.md) untuk mengetahui proses pelaporan kerentanan keamanan.
 
-## 🤝 Contributing
+## 🤝 Kontribusi
 
-Contributions are welcome — bug fixes, tests, documentation, accessibility improvements, and useful features.
+Kontribusi sangat terbuka, baik berupa perbaikan bug, penambahan pengujian, dokumentasi, peningkatan aksesibilitas, maupun fitur yang bermanfaat.
 
-1. Create a branch for your change.
-2. Make a focused improvement.
-3. Run the checks listed above.
-4. Open a Pull Request with a clear description and test results.
+1. Buat branch baru untuk perubahanmu.
+2. Kerjakan satu peningkatan yang jelas dan terfokus.
+3. Jalankan pemeriksaan yang telah disebutkan di atas.
+4. Buat Pull Request dengan penjelasan perubahan dan hasil pengujian.
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing.
+Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) sebelum berkontribusi.
 
-## 📄 License
+## 📄 Lisensi
 
-Released under the [MIT License](LICENSE).
+Proyek ini menggunakan [MIT License](LICENSE).
 
 ---
 
 <div align="center">
 
-**Built as a starting point. Make it yours.** ⚡
+**Mulai dari fondasi ini, lalu bangun produk SaaS milikmu sendiri.** ⚡
 
-<sub>Provided “as is”, without warranty. Review, secure, and test the application before using it with real customers.</sub>
+<sub>Disediakan apa adanya tanpa jaminan. Pastikan aplikasi ditinjau, diamankan, dan diuji sebelum digunakan dengan pelanggan sungguhan.</sub>
 
 </div>
