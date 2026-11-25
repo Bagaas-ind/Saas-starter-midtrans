@@ -29,12 +29,12 @@ function isValidMidtransSignature(params: {
   grossAmount: string;
   signatureKey: string;
 }): boolean {
-  const { MIDTRANS_SERVER_KEY } = getServerEnv();
+  const { MIDTRANS_SIGNATURE_SECRET_KEY } = getServerEnv();
   const signaturePayload =
     params.orderId +
     params.statusCode +
     params.grossAmount +
-    MIDTRANS_SERVER_KEY;
+    MIDTRANS_SIGNATURE_SECRET_KEY;
 
   const expected = createHash("sha512")
     .update(signaturePayload, "utf8")
