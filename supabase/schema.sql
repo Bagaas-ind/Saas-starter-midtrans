@@ -74,6 +74,20 @@ CREATE TABLE IF NOT EXISTS public.webhook_events (
  CONSTRAINT webhook_events_order_status_unique UNIQUE(order_id,transaction_status)
 );
 CREATE INDEX IF NOT EXISTS idx_webhook_events_created_at ON public.webhook_events(created_at DESC);
+-- Retrofit the idempotency constraint when webhook_events already existed
+-- before this schema version was applied.
+DO $
+BEGIN
+ IF NOT EXISTS (
+  SELECT 1 FROM pg_constraint
+  WHERE conrelid='public.webhook_events'::regclass
+    AND conname='webhook_events_order_status_unique'
+ ) THEN
+  ALTER TABLE public.webhook_events
+   ADD CONSTRAINT webhook_events_order_status_unique UNIQUE(order_id,transaction_status);
+ END IF;
+END;
+$;
 
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
