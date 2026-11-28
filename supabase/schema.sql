@@ -182,6 +182,9 @@ BEGIN
  IF v_tx.status IN ('paid','settlement','capture') AND v_new_status NOT IN ('settlement','capture') THEN
   RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id,'status',v_tx.status);
  END IF;
+ IF v_new_status='pending' AND v_tx.status NOT IN ('pending') THEN
+  RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id,'status',v_tx.status);
+ END IF;
 
  UPDATE public.transactions SET
   status=v_new_status,
