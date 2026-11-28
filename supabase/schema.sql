@@ -58,6 +58,11 @@ CREATE TABLE IF NOT EXISTS public.transactions (
  entitlement_granted_at TIMESTAMPTZ
 );
 ALTER TABLE public.transactions ADD COLUMN IF NOT EXISTS entitlement_granted_at TIMESTAMPTZ;
+-- Preserve existing successful orders as already fulfilled during rollout.
+UPDATE public.transactions
+ SET entitlement_granted_at=COALESCE(updated_at,created_at,NOW())
+ WHERE status IN ('paid','settlement','capture')
+   AND entitlement_granted_at IS NULL;
 ALTER TABLE public.transactions DROP CONSTRAINT IF EXISTS transactions_status_check;
 ALTER TABLE public.transactions ADD CONSTRAINT transactions_status_check
  CHECK(status IN ('pending','paid','failed','expired','settlement','capture','expire','cancel','fraud_or_mismatch','deny'));
