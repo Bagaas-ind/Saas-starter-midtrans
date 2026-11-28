@@ -75,11 +75,15 @@ This open-source starter kit is actively being developed and refined. The paymen
 - 🧾 **Transaction history** — basic payment history in the dashboard.
 - 🛡️ **Database safeguards** — Row Level Security and a trigger preventing users from changing their own plan tier.
 - ⚙️ **Validated configuration** — environment variables validated with Zod.
-- 🔄 **Continuous integration** — GitHub Actions checks TypeScript and production builds.
+- 🔄 **Automated tests** — Vitest covers webhook signatures, successful processing, and idempotency.
+- 🧾 **Billing portal** — plan status, renewal CTA, period end, and transaction history.
+- 🔐 **Subscription entitlements** — server-side access checks downgrade expired paid plans to Free.
+- ⚛️ **Atomic fulfillment** — PostgreSQL RPC uses row locking and unique webhook events.
+- 🔄 **Continuous integration** — GitHub Actions runs Vitest, TypeScript checks, and production builds.
 
 ### Not included yet
 
-This is a starter, not a complete subscription platform. Automatic recurring billing, invoices, team management, usage metering, and a full subscription lifecycle still need to be implemented.
+This starter supports one-time payments for 30-day access periods. Automatic recurring billing, tax invoices, proration, automated refunds, usage metering, and team management still require additional implementation. Test the changes against your own Supabase project and Midtrans account before production.
 
 ---
 
@@ -99,7 +103,7 @@ Make sure you have:
 ```bash
 git clone https://github.com/Bagaas-ind/Saas-starter-midtrans.git
 cd Saas-starter-midtrans
-npm ci
+npm install
 ```
 
 ### 2. Configure environment variables
@@ -143,7 +147,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 2. Open **SQL Editor** in your Supabase dashboard.
 3. Open `supabase/schema.sql` in this repository.
 4. Copy the complete SQL file into the SQL Editor and run it.
-5. Confirm that the `plans`, `profiles`, and `transactions` tables exist.
+5. Confirm that `plans`, `profiles`, `transactions`, and `webhook_events` exist. The schema is re-runnable for existing installations; back up important data before applying schema changes.
 
 The schema also sets up the signup profile trigger, initial plans, and Row Level Security policies.
 
@@ -275,7 +279,7 @@ Do not deploy this starter to handle real payments until the relevant security a
 - [ ] Review Midtrans payment and fraud-status transitions.
 - [ ] Add rate limiting, request-size limits, and robust error handling.
 - [ ] Review database permissions, RLS policies, and privileged server operations.
-- [ ] Add automated unit, integration, and webhook tests.
+- [ ] Add integration tests against a real Supabase PostgreSQL project and concurrency tests.
 - [ ] Add monitoring, alerting, backups, and credential rotation.
 - [ ] Verify HTTPS, callback URLs, privacy requirements, and applicable legal obligations.
 

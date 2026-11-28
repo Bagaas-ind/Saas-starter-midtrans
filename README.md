@@ -73,11 +73,15 @@ Proyek ini dikembangkan sebagai starter kit open-source dan masih terus disempur
 - 🧾 **Riwayat transaksi** — menampilkan riwayat pembayaran dasar di dashboard.
 - 🛡️ **Keamanan database** — Row Level Security dan trigger untuk mencegah pengguna mengubah plan tier miliknya sendiri.
 - ⚙️ **Validasi konfigurasi** — environment variable divalidasi menggunakan Zod.
-- 🔄 **Continuous Integration** — GitHub Actions menjalankan pemeriksaan TypeScript dan production build.
+- 🔄 **Automated testing** — Vitest menguji signature webhook, pemrosesan sukses, dan idempotency.
+- 🧾 **Billing portal** — halaman billing menampilkan status paket, tanggal periode, CTA upgrade, dan riwayat transaksi.
+- 🔐 **Subscription entitlements** — helper server-side menurunkan akses ke Free saat periode berbayar berakhir.
+- ⚛️ **Atomic fulfillment** — PostgreSQL RPC memakai row lock dan unique webhook event untuk menghindari pemrosesan ganda.
+- 🔄 **Continuous Integration** — GitHub Actions menjalankan Vitest, TypeScript check, dan production build.
 
 ### Fitur yang belum tersedia
 
-Proyek ini belum menjadi platform langganan lengkap. Penagihan otomatis berulang, invoice, manajemen tim, pencatatan penggunaan, dan siklus langganan secara menyeluruh masih perlu dikembangkan.
+Starter ini menyediakan pembayaran satu kali untuk periode akses 30 hari; recurring billing otomatis, invoice pajak, prorata, refund automation, metering penggunaan, dan manajemen tim tetap memerlukan implementasi tambahan. Fitur baru tetap perlu diuji pada project Supabase dan akun Midtrans milikmu sebelum produksi.
 
 Penguatan keamanan pembayaran berikut juga masih dalam tahap implementasi dan verifikasi:
 
@@ -105,7 +109,7 @@ Jalankan perintah berikut di terminal:
 ```bash
 git clone https://github.com/Bagaas-ind/Saas-starter-midtrans.git
 cd Saas-starter-midtrans
-npm ci
+npm install
 ```
 
 ### 2. Atur environment variable
@@ -285,7 +289,7 @@ Jangan gunakan starter kit ini untuk menangani pembayaran sungguhan sebelum peke
 - [ ] Tinjau seluruh transisi status pembayaran dan fraud dari Midtrans.
 - [ ] Tambahkan rate limiting, batas ukuran request, dan penanganan error.
 - [ ] Tinjau permission database, kebijakan RLS, dan operasi server dengan hak istimewa.
-- [ ] Tambahkan unit test, integration test, dan webhook test.
+- [ ] Tambahkan integration test terhadap Supabase PostgreSQL aktual dan pengujian concurrency.
 - [ ] Tambahkan monitoring, alerting, backup, dan prosedur rotasi kredensial.
 - [ ] Verifikasi HTTPS, callback URL, privasi, dan kewajiban hukum yang berlaku.
 

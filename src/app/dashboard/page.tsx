@@ -13,6 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { SignOutButton } from "@/components/SignOutButton";
 import type { Plan, PlanTier, Profile, Transaction, TransactionStatus } from "@/types/database";
+import { GatedFeature } from "@/components/GatedFeature";
 
 function formatRupiah(amount: number): string {
   return new Intl.NumberFormat("id-ID", {
@@ -25,6 +26,8 @@ function formatRupiah(amount: number): string {
 function StatusBadge({ status }: { status: TransactionStatus }) {
   switch (status) {
     case "paid":
+    case "settlement":
+    case "capture":
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
           <CheckCircle2 className="h-3.5 w-3.5" />
@@ -40,6 +43,10 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
       );
     case "failed":
     case "expired":
+    case "expire":
+    case "cancel":
+    case "fraud_or_mismatch":
+    case "deny":
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-inset ring-rose-600/20">
           <XCircle className="h-3.5 w-3.5" />
@@ -213,6 +220,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </div>
           ))}
         </div>
+
+        <GatedFeature />
+
+        <div className="mt-6 text-right"><Link href="/dashboard/billing" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">Manage billing and subscription →</Link></div>
 
         {/* Transaction History Table */}
         <div className="mt-10 rounded-2xl border border-slate-200 bg-white shadow-sm">
