@@ -33,7 +33,6 @@ export async function getUserEntitlements(): Promise<UserEntitlements> {
     console.error("[subscription] Failed to verify the current user session.", {
       code: authError.code,
       message: authError.message,
-      status: authError.status,
     });
     redirect("/login");
   }
@@ -54,7 +53,6 @@ export async function getUserEntitlements(): Promise<UserEntitlements> {
       message: error.message,
       details: error.details,
       hint: error.hint,
-      status: error.status,
     });
     return freeEntitlements();
   }
