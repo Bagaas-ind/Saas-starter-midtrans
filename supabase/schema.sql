@@ -166,7 +166,7 @@ END; $$;
 CREATE OR REPLACE FUNCTION public.fulfill_midtrans_transaction(
  p_order_id TEXT,p_gross_amount NUMERIC,p_currency TEXT,p_transaction_status TEXT,
  p_payment_type TEXT,p_raw_payload JSONB
-) RETURNS JSONB LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+) RETURNS JSONB LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $function$
 DECLARE
  v_tx public.transactions%ROWTYPE;
  v_profile public.profiles%ROWTYPE;
@@ -257,7 +257,7 @@ BEGIN
    WHERE id=v_tx.id AND entitlement_granted_at IS NULL;
  END IF;
  RETURN jsonb_build_object('already_processed',false,'order_id',p_order_id,'status',v_new_status,'plan_id',v_tx.plan_id);
-END; $;
+END; $function$;
 
 REVOKE ALL ON FUNCTION public.fulfill_transaction(TEXT,TEXT) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.fulfill_transaction(TEXT,TEXT) TO service_role;
