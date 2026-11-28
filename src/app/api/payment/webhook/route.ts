@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     p_currency: payload.currency,
     p_transaction_status: payload.transaction_status,
     p_payment_type: payload.payment_type ?? null,
-    p_raw_payload: payload,
+    p_raw_payload: safePayload,
   });
 
   if (error) {
