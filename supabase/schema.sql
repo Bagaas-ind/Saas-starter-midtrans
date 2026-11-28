@@ -184,10 +184,7 @@ BEGIN
  END IF;
 
  UPDATE public.transactions SET
-  status=CASE WHEN v_new_status='settlement' OR v_new_status='capture' THEN 'paid'
-              WHEN v_new_status='expire' THEN 'expired'
-              WHEN v_new_status IN ('cancel','fraud_or_mismatch') THEN 'failed'
-              ELSE 'pending' END,
+  status=v_new_status,
   payment_type=COALESCE(p_payment_type,payment_type)
  WHERE id=v_tx.id;
 
