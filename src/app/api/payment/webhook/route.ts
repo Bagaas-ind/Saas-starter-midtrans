@@ -37,6 +37,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Malformed notification" }, { status: 400 });
 
   const payload = parsed.data;
+  const safePayload = Object.fromEntries(Object.entries(payload).filter(([key]) => key !== "signature_key"));
   let env: ReturnType<typeof getServerEnv>;
   try { env = getServerEnv(); }
   catch (error) {
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
       p_currency: payload.currency,
       p_transaction_status: "pending",
       p_payment_type: payload.payment_type ?? null,
-      p_raw_payload: payload,
+      p_raw_payload: safePayload,
     });
     if (error) {
       console.error("[payment:webhook] Pending capture could not be recorded", error);
