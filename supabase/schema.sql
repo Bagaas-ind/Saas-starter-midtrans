@@ -142,7 +142,7 @@ CREATE OR REPLACE FUNCTION public.fulfill_midtrans_transaction(
 DECLARE
  v_tx public.transactions%ROWTYPE;
  v_new_status TEXT;
- v_event_inserted BOOLEAN;
+ v_event_rows INTEGER;
  v_period_start TIMESTAMPTZ;
 BEGIN
  IF p_order_id IS NULL OR length(trim(p_order_id))=0 THEN
@@ -158,8 +158,8 @@ BEGIN
  INSERT INTO public.webhook_events(order_id,transaction_status,payload)
  VALUES(p_order_id,p_transaction_status,COALESCE(p_raw_payload,'{}'::jsonb))
  ON CONFLICT(order_id,transaction_status) DO NOTHING;
- GET DIAGNOSTICS v_event_inserted = ROW_COUNT;
- IF NOT v_event_inserted THEN
+ GET DIAGNOSTICS v_event_rows = ROW_COUNT;
+ IF v_event_rows = 0 THEN
   RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id);
  END IF;
 
