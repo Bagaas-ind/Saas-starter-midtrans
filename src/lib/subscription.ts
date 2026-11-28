@@ -26,7 +26,7 @@ export async function getUserEntitlements(): Promise<UserEntitlements> {
   if (error) throw new Error("Unable to load subscription entitlements.");
   const planTier = (data?.plan_tier ?? "free") as PlanTier;
   const currentPeriodEnd = data?.current_period_end ?? null;
-  const hasNotExpired = !currentPeriodEnd || new Date(currentPeriodEnd).getTime() > Date.now();
+  const hasNotExpired = currentPeriodEnd !== null && new Date(currentPeriodEnd).getTime() > Date.now();
   const isActive = planTier === "free" || (data?.subscription_status === "active" && hasNotExpired);
   const effectiveTier: PlanTier = isActive ? planTier : "free";
 
