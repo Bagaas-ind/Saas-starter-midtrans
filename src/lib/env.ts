@@ -10,7 +10,7 @@ const publicEnvSchema = z.object({
 const serverEnvSchema = publicEnvSchema.extend({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
   MIDTRANS_SERVER_KEY: z.string().min(1, "MIDTRANS_SERVER_KEY is required"),
-  MIDTRANS_SIGNATURE_SECRET_KEY: z.string().min(1, "MIDTRANS_SIGNATURE_SECRET_KEY is required"),
+  MIDTRANS_SIGNATURE_SECRET_KEY: z.string().optional(),
   MIDTRANS_IS_PRODUCTION: z
     .enum(["true", "false"])
     .default("false")
