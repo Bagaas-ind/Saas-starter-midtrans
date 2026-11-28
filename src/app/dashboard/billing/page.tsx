@@ -9,7 +9,7 @@ import type { PlanTier, Transaction } from "@/types/database";
 const money = (value: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(value);
 const date = (value: string) => new Date(value).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
 function Badge({ status }: { status: string }) {
- const styles: Record<string,string> = { paid:"bg-emerald-50 text-emerald-700", pending:"bg-amber-50 text-amber-700", failed:"bg-rose-50 text-rose-700", expired:"bg-slate-100 text-slate-600" };
+ const styles: Record<string,string> = { paid:"bg-emerald-50 text-emerald-700", settlement:"bg-emerald-50 text-emerald-700", capture:"bg-emerald-50 text-emerald-700", pending:"bg-amber-50 text-amber-700", failed:"bg-rose-50 text-rose-700", cancel:"bg-rose-50 text-rose-700", fraud_or_mismatch:"bg-rose-50 text-rose-700", deny:"bg-rose-50 text-rose-700", expired:"bg-slate-100 text-slate-600", expire:"bg-slate-100 text-slate-600" };
  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${styles[status] ?? "bg-slate-100 text-slate-600"}`}>{status}</span>;
 }
 
