@@ -54,8 +54,10 @@ CREATE TABLE IF NOT EXISTS public.transactions (
  status TEXT NOT NULL DEFAULT 'pending',
  snap_token TEXT, payment_type TEXT,
  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
- updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ entitlement_granted_at TIMESTAMPTZ
 );
+ALTER TABLE public.transactions ADD COLUMN IF NOT EXISTS entitlement_granted_at TIMESTAMPTZ;
 ALTER TABLE public.transactions DROP CONSTRAINT IF EXISTS transactions_status_check;
 ALTER TABLE public.transactions ADD CONSTRAINT transactions_status_check
  CHECK(status IN ('pending','paid','failed','expired','settlement','capture','expire','cancel','fraud_or_mismatch','deny'));
@@ -141,6 +143,7 @@ CREATE OR REPLACE FUNCTION public.fulfill_midtrans_transaction(
 ) RETURNS JSONB LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
 DECLARE
  v_tx public.transactions%ROWTYPE;
+ v_profile public.profiles%ROWTYPE;
  v_new_status TEXT;
  v_event_rows INTEGER;
  v_period_start TIMESTAMPTZ;
@@ -155,18 +158,20 @@ BEGIN
   RAISE EXCEPTION 'Unsupported Midtrans status: %',p_transaction_status USING ERRCODE='22023';
  END IF;
 
+ SELECT * INTO v_tx FROM public.transactions WHERE order_id=p_order_id FOR UPDATE;
+ IF NOT FOUND THEN RAISE EXCEPTION 'Transaction not found: %',p_order_id USING ERRCODE='P0002'; END IF;
+
+ -- Require an exact IDR amount match; overpayments and underpayments are not fulfilled.
+ IF p_gross_amount IS NULL OR p_gross_amount <> v_tx.amount::NUMERIC THEN
+  RAISE EXCEPTION 'Gross amount does not match the recorded amount' USING ERRCODE='22023';
+ END IF;
+
  INSERT INTO public.webhook_events(order_id,transaction_status,payload)
  VALUES(p_order_id,p_transaction_status,COALESCE(p_raw_payload,'{}'::jsonb))
  ON CONFLICT(order_id,transaction_status) DO NOTHING;
  GET DIAGNOSTICS v_event_rows = ROW_COUNT;
  IF v_event_rows = 0 THEN
-  RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id);
- END IF;
-
- SELECT * INTO v_tx FROM public.transactions WHERE order_id=p_order_id FOR UPDATE;
- IF NOT FOUND THEN RAISE EXCEPTION 'Transaction not found: %',p_order_id USING ERRCODE='P0002'; END IF;
- IF p_gross_amount IS NULL OR p_gross_amount < v_tx.amount THEN
-  RAISE EXCEPTION 'Gross amount is below the recorded amount' USING ERRCODE='22023';
+  RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id,'status',v_tx.status);
  END IF;
 
  v_new_status := CASE
@@ -178,11 +183,23 @@ BEGIN
   WHEN p_transaction_status='deny' THEN 'fraud_or_mismatch'
  END;
 
- -- Do not downgrade a fulfilled order due to late/reordered notifications.
- IF v_tx.status IN ('paid','settlement','capture') AND v_new_status NOT IN ('settlement','capture') THEN
+ -- Once a payment has granted entitlement, later success notifications may update
+ -- capture -> settlement, but must never grant another 30 days.
+ IF v_tx.entitlement_granted_at IS NOT NULL THEN
+  IF p_transaction_status IN ('capture','settlement') THEN
+   UPDATE public.transactions
+    SET status=CASE WHEN p_transaction_status='settlement' THEN 'settlement' ELSE status END,
+        payment_type=COALESCE(p_payment_type,payment_type)
+    WHERE id=v_tx.id;
+  END IF;
   RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id,'status',v_tx.status);
  END IF;
- IF v_new_status='pending' AND v_tx.status NOT IN ('pending') THEN
+
+ -- A late success must not revive an order already rejected or cancelled.
+ IF v_tx.status IN ('failed','expired','expire','cancel','deny','fraud_or_mismatch') THEN
+  RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id,'status',v_tx.status);
+ END IF;
+ IF p_transaction_status='pending' AND v_tx.status <> 'pending' THEN
   RETURN jsonb_build_object('already_processed',true,'order_id',p_order_id,'status',v_tx.status);
  END IF;
 
@@ -192,17 +209,29 @@ BEGIN
  WHERE id=v_tx.id;
 
  IF p_transaction_status IN ('settlement','capture') THEN
-  v_period_start := CASE WHEN v_tx.plan_id=(
-    SELECT plan_tier FROM public.profiles WHERE id=v_tx.user_id
-   ) THEN GREATEST(COALESCE((SELECT current_period_end FROM public.profiles WHERE id=v_tx.user_id),NOW()),NOW())
-   ELSE NOW() END;
+  -- Serialize renewals for the same account to avoid lost extensions from
+  -- concurrent payments belonging to different orders.
+  SELECT * INTO v_profile
+   FROM public.profiles WHERE id=v_tx.user_id FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Profile not found for order %',p_order_id USING ERRCODE='P0002'; END IF;
+
+  IF v_profile.plan_tier=v_tx.plan_id
+     AND v_profile.subscription_status='active'
+     AND v_profile.current_period_end > NOW() THEN
+   v_period_start := v_profile.current_period_end;
+  ELSE
+   v_period_start := NOW();
+  END IF;
+
   UPDATE public.profiles SET plan_tier=v_tx.plan_id,subscription_status='active',
    current_period_end=v_period_start+INTERVAL '30 days'
   WHERE id=v_tx.user_id;
-  IF NOT FOUND THEN RAISE EXCEPTION 'Profile not found for order %',p_order_id USING ERRCODE='P0002'; END IF;
+
+  UPDATE public.transactions SET entitlement_granted_at=NOW()
+   WHERE id=v_tx.id AND entitlement_granted_at IS NULL;
  END IF;
  RETURN jsonb_build_object('already_processed',false,'order_id',p_order_id,'status',v_new_status,'plan_id',v_tx.plan_id);
-END; $$;
+END; $;
 
 REVOKE ALL ON FUNCTION public.fulfill_transaction(TEXT,TEXT) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.fulfill_transaction(TEXT,TEXT) TO service_role;
