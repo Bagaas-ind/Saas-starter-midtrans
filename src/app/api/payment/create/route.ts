@@ -64,7 +64,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const currentPeriodEnd = profile?.current_period_end ? new Date(profile.current_period_end).getTime() : 0;\n    const hasActiveSamePlan = profile?.plan_tier === planId && profile.subscription_status === "active" && currentPeriodEnd > Date.now();\n\n    if (hasActiveSamePlan) {
+    const currentPeriodEnd = profile?.current_period_end ? new Date(profile.current_period_end).getTime() : 0;
+    const hasActiveSamePlan = profile?.plan_tier === planId && profile.subscription_status === "active" && currentPeriodEnd > Date.now();
+
+    if (hasActiveSamePlan) {
       return NextResponse.json(
         { error: `You are already subscribed to the ${plan.name} plan.` },
         { status: 400 }
