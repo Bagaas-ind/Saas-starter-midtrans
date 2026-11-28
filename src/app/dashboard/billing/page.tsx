@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft, CalendarClock, CreditCard } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { getUserEntitlements } from "@/lib/subscription";
 import type { PlanTier, Transaction } from "@/types/database";
@@ -15,16 +16,26 @@ function Badge({ status }: { status: string }) {
 
 export default async function BillingPage() {
  const supabase = await createClient();
+ const adminSupabase = createAdminClient();
  const { data: { user } } = await supabase.auth.getUser();
  if (!user) redirect("/login");
  const [entitlements, profileResult, plansResult, txResult] = await Promise.all([
   getUserEntitlements(),
   supabase.from("profiles").select("plan_tier").eq("id", user.id).maybeSingle(),
-  supabase.from("plans").select("id,name,description,price_idr,is_popular").order("price_idr"),
+  adminSupabase.from("plans").select("id,name,description,price_idr,is_popular").order("price_idr"),
   supabase.from("transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(50),
  ]);
  const transactions = (txResult.data ?? []) as Transaction[];
+ if (plansResult.error) {
+  console.error("[billing] Failed to load subscription plans", {
+   code: plansResult.error.code,
+   message: plansResult.error.message,
+   details: plansResult.error.details,
+   hint: plansResult.error.hint,
+  });
+ }
  const plans = plansResult.data ?? [];
+ const paidPlans = plans.filter(p => p.price_idr > 0);
  const currentTier = entitlements.effectiveTier;
  const profileTier = (profileResult.data?.plan_tier ?? "free") as PlanTier;
  return <main className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6">
@@ -40,7 +51,8 @@ export default async function BillingPage() {
     {profileTier !== currentTier && <p className="mt-2 text-xs text-amber-700">Your stored plan has expired; feature access is downgraded to Free automatically.</p>}
    </section>
    <section className="mt-8"><h2 className="text-lg font-bold text-slate-900">Upgrade or renew</h2><div className="mt-4 grid gap-4 md:grid-cols-2">
-    {plans.filter(p => p.price_idr > 0).map(plan => <article key={plan.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div className="flex justify-between gap-2"><h3 className="font-bold text-slate-900">{plan.name}</h3>{plan.is_popular && <span className="text-xs font-semibold text-indigo-600">Popular</span>}</div><p className="mt-3 text-2xl font-extrabold text-slate-900">{money(plan.price_idr)}<span className="text-sm font-normal text-slate-500"> / 30 days</span></p><p className="mt-2 text-sm text-slate-600">{plan.description}</p><div className="mt-5"><CheckoutButton planId={plan.id as PlanTier} planName={plan.name} priceIdr={plan.price_idr} currentPlan={currentTier} isAuthenticated={true} variant={plan.is_popular ? "primary" : "outline"} /></div></article>)}
+    {paidPlans.map(plan => <article key={plan.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div className="flex justify-between gap-2"><h3 className="font-bold text-slate-900">{plan.name}</h3>{plan.is_popular && <span className="text-xs font-semibold text-indigo-600">Popular</span>}</div><p className="mt-3 text-2xl font-extrabold text-slate-900">{money(plan.price_idr)}<span className="text-sm font-normal text-slate-500"> / 30 days</span></p><p className="mt-2 text-sm text-slate-600">{plan.description}</p><div className="mt-5"><CheckoutButton planId={plan.id as PlanTier} planName={plan.name} priceIdr={plan.price_idr} currentPlan={currentTier} isAuthenticated={true} variant={plan.is_popular ? "primary" : "outline"} /></div></article>)}
+    {paidPlans.length === 0 && <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800" role="status">Subscription plans are temporarily unavailable. Please refresh in a moment. If this continues, contact support.</div>}
    </div></section>
    <section className="mt-10 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
     <div className="flex items-center gap-2 border-b border-slate-200 px-6 py-5"><CreditCard className="h-5 w-5 text-indigo-600" /><h2 className="font-bold text-slate-900">Transaction history</h2></div>
