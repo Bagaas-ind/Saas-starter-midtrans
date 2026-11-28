@@ -79,9 +79,16 @@ CREATE TABLE IF NOT EXISTS public.webhook_events (
  CONSTRAINT webhook_events_order_status_unique UNIQUE(order_id,transaction_status)
 );
 CREATE INDEX IF NOT EXISTS idx_webhook_events_created_at ON public.webhook_events(created_at DESC);
+-- Remove redundant historical duplicates before enforcing the unique key.
+DELETE FROM public.webhook_events older
+USING public.webhook_events newer
+WHERE older.order_id=newer.order_id
+ AND older.transaction_status=newer.transaction_status
+ AND (older.created_at,older.id) > (newer.created_at,newer.id);
+
 -- Retrofit the idempotency constraint when webhook_events already existed
 -- before this schema version was applied.
-DO $
+DO $migration$
 BEGIN
  IF NOT EXISTS (
   SELECT 1 FROM pg_constraint
@@ -92,7 +99,7 @@ BEGIN
    ADD CONSTRAINT webhook_events_order_status_unique UNIQUE(order_id,transaction_status);
  END IF;
 END;
-$;
+$migration$;
 
 CREATE OR REPLACE FUNCTION public.set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
