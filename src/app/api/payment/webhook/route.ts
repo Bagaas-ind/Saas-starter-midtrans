@@ -1,8 +1,8 @@
-import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerEnv } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { verifyMidtransSignature } from "@/lib/midtrans/signature";
 
 export const runtime = "nodejs";
 
@@ -16,17 +16,6 @@ const midtransWebhookSchema = z.object({
   payment_type: z.string().optional(),
   fraud_status: z.string().optional(),
 }).passthrough();
-
-export function verifyMidtransSignature(input: {
-  order_id: string; status_code: string; gross_amount: string; signature_key: string;
-}, serverKey: string): boolean {
-  const expected = createHash("sha512")
-    .update(input.order_id + input.status_code + input.gross_amount + serverKey, "utf8")
-    .digest();
-  let received: Buffer;
-  try { received = Buffer.from(input.signature_key, "hex"); } catch { return false; }
-  return received.length === expected.length && timingSafeEqual(expected, received);
-}
 
 export async function POST(request: Request) {
   let raw: unknown;
