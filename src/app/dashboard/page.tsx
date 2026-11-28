@@ -26,6 +26,8 @@ function formatRupiah(amount: number): string {
 function StatusBadge({ status }: { status: TransactionStatus }) {
   switch (status) {
     case "paid":
+    case "settlement":
+    case "capture":
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
           <CheckCircle2 className="h-3.5 w-3.5" />
@@ -41,6 +43,10 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
       );
     case "failed":
     case "expired":
+    case "expire":
+    case "cancel":
+    case "fraud_or_mismatch":
+    case "deny":
       return (
         <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-inset ring-rose-600/20">
           <XCircle className="h-3.5 w-3.5" />
